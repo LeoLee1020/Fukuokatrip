@@ -259,6 +259,12 @@
     .fcard .tag.alt { color: var(--muted); }
     .food-extra dt { font-weight: 800; color: var(--blue); }
 
+    /* ---------- 捲動浮現 ---------- */
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal { opacity: 0; transform: translateY(16px); transition: opacity .55s ease, transform .55s cubic-bezier(.2, .7, .2, 1); }
+      .reveal.in { opacity: 1; transform: none; }
+    }
+
     footer { margin-top: 56px; padding: 30px 0 44px; text-align: center; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
     footer .yoi { font-size: 1.1rem; color: var(--ink); letter-spacing: .3em; margin-bottom: 4px; }
   </style>
@@ -781,6 +787,48 @@
       }
       var timer = setInterval(tick, 1000);
       tick();
+    })();
+
+    // ============ 捲動浮現:內容進入畫面時,一個接一個出現 ============
+    (function () {
+      if (!("IntersectionObserver" in window)) return;
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      var sel = ".block-title, .lead, .item, .flt, .fnote, .hotel-name, .wx-now, .wx-cell, .wx-note, " +
+        ".rec, .group > h3, .group > .gnote, .group .row-head, .group > ul > li, .tips dt, .tips dd, .progress";
+      var singles = Array.prototype.slice.call(document.querySelectorAll(sel));
+      var rows = Array.prototype.slice.call(document.querySelectorAll(".food-row"));
+
+      singles.forEach(function (el) { el.classList.add("reveal"); });
+      rows.forEach(function (r) {
+        r.querySelectorAll(".fcard").forEach(function (c) { c.classList.add("reveal"); });
+      });
+
+      function show(el, delay, instant) {
+        var targets = el.classList.contains("food-row") ? Array.prototype.slice.call(el.querySelectorAll(".fcard")) : [el];
+        targets.forEach(function (t, i) {
+          if (instant) t.style.transition = "none";
+          else t.style.transitionDelay = Math.min(delay + (targets.length > 1 ? i * 80 : 0), 450) + "ms";
+          t.classList.add("in");
+        });
+      }
+
+      var io = new IntersectionObserver(function (entries) {
+        var n = 0;
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            show(en.target, Math.min(n * 70, 350), false);
+            n++;
+            io.unobserve(en.target);
+          } else if (en.boundingClientRect.top < 0) {
+            // 用導覽列直接跳到下面時,被跳過的上方內容立刻顯示,不留空白
+            show(en.target, 0, true);
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: "0px 0px -6% 0px" });
+
+      singles.concat(rows).forEach(function (el) { io.observe(el); });
     })();
   </script>
 </body>
