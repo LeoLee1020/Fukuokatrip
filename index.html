@@ -3,177 +3,280 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>福岡四日遊 2027</title>
-  <meta name="description" content="2027/1/9 – 1/12 福岡 4 天 3 夜行程:博多、天神、太宰府">
+  <meta name="theme-color" content="#1e3354">
+  <title>福岡之旅 2027</title>
+  <meta name="description" content="2027/1/9 至 1/12 福岡 4 天 3 夜:博多、天神、太宰府。含旅遊小提醒與行李清單。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #fbf8f3;
-      --text: #2a2623;
-      --muted: #7a726a;
-      --accent: #d6453d;
-      --accent-soft: #fbe9e7;
-      --card: #ffffff;
-      --border: #ece5da;
-      --flight: #2f6fed;
-      --meal: #d9822b;
+      --paper: #f4f2ec;      /* 和紙 */
+      --card: #fbfaf6;
+      --ink: #25282d;        /* 墨 */
+      --muted: #6c7078;
+      --line: #d9d4c7;
+      --indigo: #1e3354;     /* 藍染 */
+      --blue: #1e3354;       /* 藍色文字 */
+      --red: #c4302b;        /* 朱 */
+      --wave: rgba(255, 255, 255, .13);
+      --hero-text: #f4f2ec;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #171514;
-        --text: #f0ebe4;
-        --muted: #a39b91;
-        --accent: #ff7a70;
-        --accent-soft: #3a2220;
-        --card: #211e1c;
-        --border: #34302c;
-        --flight: #7ba3ff;
-        --meal: #f0a655;
+        --paper: #14171c;
+        --card: #1a1e24;
+        --ink: #e8e5de;
+        --muted: #9a9ea6;
+        --line: #2f343c;
+        --indigo: #16263f;
+        --blue: #8fb0e8;
+        --red: #e5605a;
+        --wave: rgba(255, 255, 255, .09);
       }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+    html { scroll-padding-top: 64px; }
+    @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
     body {
-      font-family: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+      font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.85;
     }
     a { color: inherit; text-decoration: none; }
-    .container { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+    :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+    .container { max-width: 700px; margin: 0 auto; padding: 0 20px; }
 
-    .hero { padding: 48px 0 28px; text-align: center; }
-    .hero .sun {
-      width: 64px; height: 64px; border-radius: 50%;
-      background: var(--accent); margin: 0 auto 18px;
-      box-shadow: 0 0 0 10px var(--accent-soft);
+    /* ---------- 首頁:藍染與青海波 ---------- */
+    .hero {
+      background-color: var(--indigo);
+      background-image:
+        radial-gradient(circle at 50% 100%, transparent 0 13px, var(--wave) 13px 14px, transparent 14px 20px, var(--wave) 20px 21px, transparent 21px 27px, var(--wave) 27px 28px, transparent 28px),
+        radial-gradient(circle at 50% 100%, transparent 0 13px, var(--wave) 13px 14px, transparent 14px 20px, var(--wave) 20px 21px, transparent 21px 27px, var(--wave) 27px 28px, transparent 28px);
+      background-size: 60px 30px;
+      background-position: 0 0, 30px 15px;
+      color: var(--hero-text);
+      padding: 56px 0 30px;
     }
-    .hero h1 { font-size: clamp(1.9rem, 7vw, 2.6rem); letter-spacing: .04em; }
-    .hero .dates { color: var(--muted); margin-top: 6px; }
+    .hero-inner {
+      display: flex; flex-direction: row-reverse; justify-content: center;
+      align-items: flex-start; gap: 26px;
+    }
+    .hero h1 {
+      writing-mode: vertical-rl;
+      font-size: clamp(4.6rem, 23vw, 8.2rem);
+      font-weight: 800; letter-spacing: .14em; line-height: 1.05;
+    }
+    .hero-side { display: flex; flex-direction: column; align-items: center; gap: 22px; padding-top: 14px; }
+    .hero-lines { display: flex; flex-direction: row-reverse; gap: 14px; }
+    .v { writing-mode: vertical-rl; letter-spacing: .32em; font-size: 1rem; line-height: 1.4; }
+    .hanko {
+      width: 52px; height: 52px; display: grid; place-content: center;
+      background: var(--red); color: #fff; font-size: 1.7rem; font-weight: 800;
+      border-radius: 4px; transform: rotate(-5deg);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35);
+    }
     .countdown {
-      display: inline-block; margin-top: 16px; padding: 6px 16px;
-      background: var(--accent-soft); color: var(--accent);
-      border-radius: 999px; font-weight: 600; font-size: .95rem;
+      margin-top: 30px; padding-top: 14px; text-align: center;
+      border-top: 1px solid rgba(244, 242, 236, .25);
+      font-size: .95rem; letter-spacing: .08em;
       font-variant-numeric: tabular-nums;
     }
 
-    nav.days {
+    /* ---------- 導覽 ---------- */
+    nav.top {
       position: sticky; top: 0; z-index: 10;
-      background: var(--bg); border-bottom: 1px solid var(--border);
+      background: var(--paper); border-bottom: 1px solid var(--line);
     }
-    nav.days .container { display: flex; gap: 8px; padding-top: 10px; padding-bottom: 10px; overflow-x: auto; }
-    nav.days a {
-      flex: 1 0 auto; text-align: center; padding: 6px 14px;
-      border: 1px solid var(--border); border-radius: 999px;
-      background: var(--card); font-size: .9rem; white-space: nowrap;
-    }
-    nav.days a:hover { border-color: var(--accent); color: var(--accent); }
+    nav.top .container { display: flex; gap: 22px; overflow-x: auto; padding-top: 11px; padding-bottom: 11px; }
+    nav.top a { flex: none; font-size: .95rem; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+    nav.top a:hover { border-bottom-color: var(--red); }
+    nav.top .sep { flex: none; width: 1px; background: var(--line); }
 
-    .day { padding: 32px 0 8px; }
-    .day-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
-    .day-head .no { font-size: .85rem; font-weight: 700; color: #fff; background: var(--accent); padding: 2px 10px; border-radius: 6px; }
-    .day-head h2 { font-size: 1.4rem; }
-    .day-sub { color: var(--muted); font-size: .92rem; margin-bottom: 18px; }
+    /* ---------- 區塊標題 ---------- */
+    .block { padding: 44px 0 8px; }
+    .block-title::before {
+      content: ""; display: block; width: 36px; height: 3px;
+      background: var(--indigo); margin-bottom: 14px;
+    }
+    @media (prefers-color-scheme: dark) { .block-title::before { background: var(--blue); } }
+    .block-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; flex-direction: row; }
+    .block-title::before { flex-basis: 100%; }
+    .block-title h2 { font-size: 1.7rem; font-weight: 800; letter-spacing: .06em; }
+    .block-title time, .block-title span.meta { color: var(--muted); font-size: .92rem; }
+    .day-no {
+      font-size: .82rem; font-weight: 600; background: var(--red); color: #fff;
+      padding: 1px 9px; border-radius: 2px; letter-spacing: .1em;
+    }
+    .lead { color: var(--muted); font-size: .95rem; margin: 6px 0 14px; }
 
-    .timeline { list-style: none; position: relative; padding-left: 4px; }
-    .timeline::before {
-      content: ""; position: absolute; left: 62px; top: 8px; bottom: 8px;
-      width: 2px; background: var(--border);
+    /* ---------- 時間軸 ---------- */
+    .timeline { list-style: none; }
+    .item {
+      display: grid; grid-template-columns: 4.4rem 1fr; gap: 6px;
+      padding: 12px 0; border-bottom: 1px dotted var(--line);
     }
-    .item { display: flex; gap: 0; margin-bottom: 14px; position: relative; }
-    .time { width: 52px; flex: none; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; padding-top: 12px; font-size: .95rem; }
-    .dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--bg); border: 3px solid var(--accent);
-      flex: none; margin: 16px 12px 0 4px; position: relative; z-index: 1;
+    .time { color: var(--blue); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .name { font-weight: 600; }
+    .name a { border-bottom: 1px solid var(--line); }
+    .name a:hover { border-bottom-color: var(--red); color: var(--red); }
+    .note { color: var(--muted); font-size: .9rem; line-height: 1.6; }
+    .tag {
+      display: inline-block; font-size: .74rem; font-weight: 600; line-height: 1.5;
+      padding: 0 6px; margin-right: 8px; border: 1px solid currentColor; border-radius: 2px;
+      vertical-align: 1px;
     }
-    .item.flight .dot { border-color: var(--flight); }
-    .item.meal .dot { border-color: var(--meal); }
-    .card {
-      flex: 1; min-width: 0; background: var(--card);
-      border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;
-    }
-    .card .name { font-weight: 600; }
-    .card .name a { border-bottom: 1px dashed var(--muted); }
-    .card .name a:hover { color: var(--accent); border-color: var(--accent); }
-    .card .note { color: var(--muted); font-size: .88rem; margin-top: 2px; }
-    .badge {
-      display: inline-block; font-size: .75rem; font-weight: 700;
-      padding: 1px 8px; border-radius: 6px; margin-right: 6px; vertical-align: 1px;
-    }
-    .badge.meal { background: rgba(217,130,43,.15); color: var(--meal); }
-    .badge.flight { background: rgba(47,111,237,.14); color: var(--flight); }
-    .badge.opt { background: var(--border); color: var(--muted); }
-    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag.meal { color: var(--red); }
+    .tag.flight { color: var(--blue); }
+    .tag.opt { color: var(--muted); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
     .chips a {
-      padding: 3px 12px; font-size: .88rem; border: 1px solid var(--border);
-      border-radius: 999px; background: var(--bg);
+      padding: 1px 12px; font-size: .92rem; border: 1px solid var(--line);
+      border-radius: 3px; background: var(--card);
     }
-    .chips a:hover { border-color: var(--meal); color: var(--meal); }
-    .pick-hint { color: var(--muted); font-size: .8rem; margin-top: 6px; }
+    .chips a:hover { border-color: var(--red); color: var(--red); }
+    .hint { color: var(--muted); font-size: .82rem; margin-top: 6px; }
 
-    footer { padding: 36px 0 48px; text-align: center; color: var(--muted); font-size: .85rem; }
+    /* ---------- 小提醒 ---------- */
+    .tips dl { display: grid; grid-template-columns: 7.2rem 1fr; }
+    .tips dt, .tips dd { padding: 14px 0; border-bottom: 1px dotted var(--line); }
+    .tips dt { font-weight: 800; color: var(--blue); }
+    .tips dd { color: var(--ink); font-size: .97rem; }
+    @media (max-width: 560px) {
+      .tips dl { grid-template-columns: 1fr; }
+      .tips dt { padding-bottom: 0; border-bottom: 0; }
+      .tips dd { padding-top: 2px; }
+    }
+
+    /* ---------- 行李清單 ---------- */
+    .progress { margin: 6px 0 4px; }
+    .bar { height: 3px; background: var(--line); }
+    .bar span { display: block; height: 100%; width: 0; background: var(--red); transition: width .25s ease; }
+    .progress-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: .9rem; color: var(--muted); }
+    .textbtn {
+      font: inherit; font-size: .88rem; color: var(--muted); background: none;
+      border: 0; border-bottom: 1px solid var(--line); cursor: pointer; padding: 0;
+    }
+    .textbtn:hover { color: var(--red); border-bottom-color: var(--red); }
+    .group { margin-top: 22px; }
+    .group h3 { font-size: 1.05rem; font-weight: 800; color: var(--blue); letter-spacing: .06em; }
+    .group .gnote { color: var(--muted); font-size: .84rem; }
+    .group ul { list-style: none; margin-top: 4px; }
+    .group label {
+      display: flex; gap: 12px; align-items: flex-start; cursor: pointer;
+      padding: 8px 0; border-bottom: 1px dotted var(--line);
+    }
+    .group input[type="checkbox"] {
+      appearance: none; -webkit-appearance: none; flex: none;
+      width: 19px; height: 19px; margin-top: 5px;
+      border: 1.5px solid var(--ink); border-radius: 2px; background: var(--card);
+      display: grid; place-content: center; cursor: pointer;
+    }
+    .group input[type="checkbox"]:checked { background: var(--red); border-color: var(--red); }
+    .group input[type="checkbox"]:checked::after {
+      content: ""; width: 9px; height: 5px;
+      border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translate(1px, -1px);
+    }
+    .group input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+
+    footer { margin-top: 56px; padding: 30px 0 44px; text-align: center; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
+    footer .yoi { font-size: 1.1rem; color: var(--ink); letter-spacing: .3em; margin-bottom: 4px; }
   </style>
 </head>
 <body>
 
   <header class="hero">
     <div class="container">
-      <div class="sun"></div>
-      <h1>福岡四日遊</h1>
-      <p class="dates">2027/1/9(六)– 1/12(二)・4 天 3 夜</p>
-      <span class="countdown" id="countdown"></span>
+      <div class="hero-inner">
+        <h1>福岡</h1>
+        <div class="hero-side">
+          <div class="hero-lines">
+            <p class="v">二〇二七年一月九日至十二日</p>
+            <p class="v">博多 天神 太宰府</p>
+          </div>
+          <span class="hanko" aria-hidden="true">旅</span>
+        </div>
+      </div>
+      <p class="countdown" id="countdown" aria-live="off"></p>
     </div>
   </header>
 
-  <nav class="days">
+  <nav class="top" aria-label="頁面導覽">
     <div class="container">
-      <a href="#day1">1/9 博多</a>
-      <a href="#day2">1/10 天神</a>
-      <a href="#day3">1/11 太宰府</a>
-      <a href="#day4">1/12 返程</a>
+      <a href="#day1">一日目</a>
+      <a href="#day2">二日目</a>
+      <a href="#day3">三日目</a>
+      <a href="#day4">四日目</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a href="#tips">小提醒</a>
+      <a href="#packing">行李清單</a>
     </div>
   </nav>
 
-  <main class="container" id="app"></main>
+  <main class="container">
+    <div id="days"></div>
+
+    <section class="block tips" id="tips">
+      <div class="block-title"><h2>旅遊小提醒</h2></div>
+      <p class="lead">出發前看一遍,現場會輕鬆很多。</p>
+      <dl id="tips-list"></dl>
+    </section>
+
+    <section class="block" id="packing">
+      <div class="block-title"><h2>行李清單</h2></div>
+      <p class="lead">打勾會記在這支手機或電腦的瀏覽器裡。</p>
+      <div class="progress">
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar-wrap"><span id="bar"></span></div>
+        <div class="progress-row">
+          <span id="ptext"></span>
+          <button type="button" class="textbtn" id="reset">全部取消勾選</button>
+        </div>
+      </div>
+      <div id="packing-list"></div>
+    </section>
+  </main>
 
   <footer>
-    <div class="container">點店名或景點名稱可以直接開啟 Google 地圖<br>祝旅途愉快 ✈️</div>
+    <div class="container">
+      <p class="yoi">良い旅を</p>
+      <p>點店名或景點名稱,可以直接開啟 Google 地圖</p>
+    </div>
   </footer>
 
   <script>
-    // 行程資料:要修改行程,改這裡就可以
-    // type: flight(航班) / meal(用餐);pick: true 表示多家擇一
+    // ============ 資料:要修改內容,改這裡就可以 ============
+    // type: flight(航班) / meal(用餐);names: 多家擇一
     var DAYS = [
       {
-        id: "day1", no: "Day 1", date: "2027/1/9(六)", title: "博多",
-        sub: "早班機抵達,午餐後逛博多車站,晚上吃牛雜鍋",
+        id: "day1", no: "一日目", date: "2027/1/9 週六", title: "博多",
+        sub: "早班機抵達,午餐後逛博多車站,晚上吃牛雜鍋。",
         items: [
           { t: "06:45", name: "桃園機場第二航廈", type: "flight" },
           { t: "07:45", name: "起飛", type: "flight", note: "航班 JX842" },
           { t: "11:00", name: "福岡機場", type: "flight", q: "福岡機場" },
-          { t: "13:00", type: "meal", label: "午餐", pick: true,
-            names: ["ShinShin", "麵屋兼虎", "博多一雙", "博多一幸舍"] },
+          { t: "13:00", type: "meal", label: "午餐", names: ["ShinShin", "麵屋兼虎", "博多一雙", "博多一幸舍"] },
           { t: "14:30", name: "博多車站逛街", note: "MIGNON 博多店", q: "MIGNON 博多店" },
           { t: "19:00", type: "meal", label: "晚餐", name: "博多牛雜鍋前田屋 博多店", q: "博多牛雜鍋前田屋 博多店" }
         ]
       },
       {
-        id: "day2", no: "Day 2", date: "2027/1/10(日)", title: "天神",
-        sub: "咖啡、神社、逛街,晚上水炊鍋",
+        id: "day2", no: "二日目", date: "2027/1/10 週日", title: "天神",
+        sub: "咖啡、神社、逛街,晚上吃水炊鍋。",
         items: [
           { t: "10:00", type: "meal", label: "早餐", name: "The Full Full Hakata", q: "The Full Full Hakata" },
           { t: "10:30", name: "Fuk Coffee", note: "咖啡", q: "Fuk Coffee 福岡" },
           { t: "11:30", name: "櫛田神社", q: "櫛田神社" },
-          { t: "12:30", type: "meal", label: "午餐", pick: true,
-            names: ["ShinShin", "元祖博多明太重", "一蘭拉麵 天神西通店", "麵屋gaga"] },
+          { t: "12:30", type: "meal", label: "午餐", names: ["ShinShin", "元祖博多明太重", "一蘭拉麵 天神西通店", "麵屋gaga"] },
           { t: "14:00", name: "福岡 PARCO / Mina 天神", q: "福岡PARCO" },
           { t: "16:00", name: "索拉利亞廣場", q: "Solaria Plaza 福岡" },
           { t: "19:00", type: "meal", label: "晚餐", name: "博多水炊鍋專門 橙", q: "博多水炊鍋専門 橙" }
         ]
       },
       {
-        id: "day3", no: "Day 3", date: "2027/1/11(一)", title: "太宰府",
-        sub: "參拜太宰府天滿宮,逛參道、吃梅枝餅,晚上吃肉",
+        id: "day3", no: "三日目", date: "2027/1/11 週一", title: "太宰府",
+        sub: "參拜太宰府天滿宮,逛參道、吃梅枝餅,晚上吃肉。",
         items: [
           { t: "09:00", name: "太宰府天滿宮", q: "太宰府天滿宮" },
           { t: "10:30", name: "表參道散步", note: "梅枝餅", q: "太宰府表參道" },
@@ -184,63 +287,144 @@
         ]
       },
       {
-        id: "day4", no: "Day 4", date: "2027/1/12(二)", title: "返程",
-        sub: "吃完海鮮早餐,搭機回家",
+        id: "day4", no: "四日目", date: "2027/1/12 週二", title: "返程",
+        sub: "吃完海鮮早餐,搭機回家。",
         items: [
           { t: "07:30", type: "meal", label: "早餐", name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸" },
           { t: "08:30", name: "博多車站", q: "博多車站" },
           { t: "09:00", name: "福岡機場", type: "flight", q: "福岡機場" },
           { t: "12:10", name: "起飛", type: "flight", note: "航班 JX843" },
           { t: "13:50", name: "桃園機場第二航廈", type: "flight" },
-          { t: "15:00", name: "溫暖的家 🏠" }
+          { t: "15:00", name: "溫暖的家" }
         ]
       }
     ];
 
-    function mapUrl(q) {
-      return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q.indexOf("福岡") >= 0 ? q : "福岡 " + q);
-    }
+    var TIPS = [
+      { t: "穿搭", d: "一月的福岡約 3 至 10 度,海風偏冷。用洋蔥式穿搭加防風外套,圍巾和手套很有用。室內暖氣很強,衣服要方便穿脫。" },
+      { t: "連假人潮", d: "1/11 是日本的成人之日連假,太宰府和熱門餐廳會比平常擁擠。太宰府已排在早上九點,可以避開大部分人潮。" },
+      { t: "十日恵比須", d: "博多的十日恵比須大祭通常在 1/8 到 1/11,附近會有攤販和很多人。想順道看看的話,出發前再確認日期與地點。" },
+      { t: "入境手續", d: "建議先在 Visit Japan Web 填好入境審查與海關申報,並把 QR Code 截圖存起來。規定可能調整,出發前請再看一次官方說明。" },
+      { t: "現金與交通卡", d: "多數店家可以刷卡,但小店、神社周邊和部分攤販仍以現金為主,請準備一些日幣。福岡有「はやかけん」交通卡,Suica 等日本全國通用的交通卡也能在地鐵、巴士和西鐵使用。" },
+      { t: "前往太宰府", d: "從天神搭西鐵天神大牟田線,通常在二日市站轉乘太宰府線,全程約 30 分鐘左右。搭車前用地圖 App 確認班次。" },
+      { t: "機場往返", d: "福岡機場離市區很近,搭地下鐵到博多站約 5 分鐘。回程班機 12:10 起飛,早上的時間已經排得很寬裕。" },
+      { t: "餐廳預約", d: "前田屋、橙這類熱門店的晚餐時段容易客滿,建議先預約,或提早抵達排隊。" },
+      { t: "退稅與購物", d: "購物退稅的規定近年有調整,結帳前先向店家確認辦理方式,並隨身帶護照。" },
+      { t: "街頭禮儀", d: "街上的垃圾桶不多,隨身帶一個小袋子。搭電車時保持安靜,避免講電話。" }
+    ];
+
+    var PACKING = [
+      { g: "證件與付款", items: [
+        "護照", "電子機票與登機證(JX842、JX843)", "Visit Japan Web QR Code 截圖",
+        "日幣現金與零錢包", "信用卡", "住宿確認資料" ] },
+      { g: "電子用品", items: [
+        "手機與充電線", "行動電源(要放在隨身行李)", "eSIM 或網路分享器", "耳機", "相機與記憶卡" ] },
+      { g: "冬季衣物", items: [
+        "防風外套", "發熱衣與保暖內層", "圍巾、手套、帽子", "好走的鞋", "換洗內衣與襪子", "睡衣" ] },
+      { g: "盥洗與藥品", note: "隨身行李的液體,每瓶不能超過 100 毫升。", items: [
+        "牙刷牙膏與盥洗用品", "常備藥(感冒、腸胃、止痛)", "乳液與護唇膏", "口罩", "暖暖包" ] },
+      { g: "其他小物", items: [ "折疊雨傘", "環保袋與小垃圾袋", "水瓶" ] }
+    ];
+
+    // ============ 工具 ============
     function esc(s) {
       return String(s).replace(/[&<>"]/g, function (c) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
       });
     }
+    function mapUrl(q) {
+      return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q.indexOf("福岡") >= 0 ? q : "福岡 " + q);
+    }
     function link(name, q) {
       return '<a href="' + mapUrl(q || name) + '" target="_blank" rel="noopener">' + esc(name) + "</a>";
     }
 
+    // ============ 行程 ============
     function renderItem(it) {
-      var cls = it.type ? " " + it.type : "";
-      var badge = "";
-      if (it.type === "meal") badge = '<span class="badge meal">' + esc(it.label || "用餐") + "</span>";
-      if (it.type === "flight") badge = '<span class="badge flight">航班</span>';
-      if (it.optional) badge += '<span class="badge opt">' + esc(it.optional) + "</span>";
+      var tag = "";
+      if (it.type === "meal") tag = '<span class="tag meal">' + esc(it.label || "用餐") + "</span>";
+      if (it.type === "flight") tag = '<span class="tag flight">航班</span>';
+      if (it.optional) tag += '<span class="tag opt">' + esc(it.optional) + "</span>";
 
-      var body = "";
+      var body;
       if (it.names) {
-        body += '<div class="name">' + badge + "餐廳擇一</div>";
-        body += '<div class="chips">' + it.names.map(function (n) { return link(n); }).join("") + "</div>";
-        if (it.pick) body += '<div class="pick-hint">看當天排隊狀況挑一家</div>';
+        body = '<div class="name">' + tag + "以下擇一</div>" +
+          '<div class="chips">' + it.names.map(function (n) { return link(n); }).join("") + "</div>" +
+          '<div class="hint">依當天排隊狀況挑一家</div>';
       } else {
-        var nm = it.q ? link(it.name, it.q) : esc(it.name);
-        body += '<div class="name">' + badge + nm + "</div>";
-        if (it.note) body += '<div class="note">' + esc(it.note) + "</div>";
+        body = '<div class="name">' + tag + (it.q ? link(it.name, it.q) : esc(it.name)) + "</div>" +
+          (it.note ? '<div class="note">' + esc(it.note) + "</div>" : "");
       }
-      return '<li class="item' + cls + '"><div class="time">' + it.t + '</div><div class="dot"></div><div class="card">' + body + "</div></li>";
+      return '<li class="item"><div class="time">' + it.t + "</div><div>" + body + "</div></li>";
     }
 
-    document.getElementById("app").innerHTML = DAYS.map(function (d) {
-      return '<section class="day" id="' + d.id + '">' +
-        '<div class="day-head"><span class="no">' + d.no + "</span><h2>" + esc(d.title) + "</h2><span class=\"day-sub\" style=\"margin:0\">" + esc(d.date) + "</span></div>" +
-        '<p class="day-sub">' + esc(d.sub) + "</p>" +
-        '<ul class="timeline">' + d.items.map(renderItem).join("") + "</ul></section>";
+    document.getElementById("days").innerHTML = DAYS.map(function (d) {
+      return '<section class="block" id="' + d.id + '">' +
+        '<div class="block-title"><span class="day-no">' + esc(d.no) + "</span><h2>" + esc(d.title) + "</h2><time>" + esc(d.date) + "</time></div>" +
+        '<p class="lead">' + esc(d.sub) + "</p>" +
+        '<ol class="timeline">' + d.items.map(renderItem).join("") + "</ol></section>";
     }).join("");
 
-    // 倒數計時(精準到秒):以台灣時間 2027/1/9 07:45 起飛為準
+    // ============ 小提醒 ============
+    document.getElementById("tips-list").innerHTML = TIPS.map(function (x) {
+      return "<dt>" + esc(x.t) + "</dt><dd>" + esc(x.d) + "</dd>";
+    }).join("");
+
+    // ============ 行李清單(勾選狀態存在瀏覽器) ============
+    var STORE_KEY = "fukuoka-packing-2027";
+    function loadChecked() {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { return {}; }
+    }
+    function saveChecked(obj) {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch (e) {}
+    }
+    var checked = loadChecked();
+    var total = 0;
+
+    document.getElementById("packing-list").innerHTML = PACKING.map(function (grp, gi) {
+      var lis = grp.items.map(function (name, ii) {
+        total++;
+        var id = "p-" + gi + "-" + ii;
+        return '<li><label><input type="checkbox" id="' + id + '" data-key="' + id + '"><span>' + esc(name) + "</span></label></li>";
+      }).join("");
+      return '<div class="group"><h3>' + esc(grp.g) + "</h3>" +
+        (grp.note ? '<p class="gnote">' + esc(grp.note) + "</p>" : "") +
+        "<ul>" + lis + "</ul></div>";
+    }).join("");
+
+    function updateProgress() {
+      var boxes = document.querySelectorAll('#packing-list input[type="checkbox"]');
+      var done = 0;
+      boxes.forEach(function (b) { if (b.checked) done++; });
+      var pct = total ? Math.round(done / total * 100) : 0;
+      document.getElementById("bar").style.width = pct + "%";
+      document.getElementById("bar-wrap").setAttribute("aria-valuenow", pct);
+      document.getElementById("ptext").textContent = done === total && total > 0
+        ? "全部準備好了,可以出發"
+        : "已準備 " + done + " / " + total;
+    }
+
+    document.querySelectorAll('#packing-list input[type="checkbox"]').forEach(function (b) {
+      b.checked = !!checked[b.dataset.key];
+      b.addEventListener("change", function () {
+        if (b.checked) checked[b.dataset.key] = true; else delete checked[b.dataset.key];
+        saveChecked(checked);
+        updateProgress();
+      });
+    });
+    document.getElementById("reset").addEventListener("click", function () {
+      checked = {};
+      saveChecked(checked);
+      document.querySelectorAll('#packing-list input[type="checkbox"]').forEach(function (b) { b.checked = false; });
+      updateProgress();
+    });
+    updateProgress();
+
+    // ============ 倒數計時(精準到秒,以台灣時間 2027/1/9 07:45 起飛為準) ============
     (function () {
       var el = document.getElementById("countdown");
-      var start = new Date("2027-01-09T07:45:00+08:00").getTime(); // 出發(JX842 起飛)
-      var end = new Date("2027-01-12T15:00:00+08:00").getTime();   // 回到家
+      var start = new Date("2027-01-09T07:45:00+08:00").getTime();
+      var end = new Date("2027-01-12T15:00:00+08:00").getTime();
       function pad(n) { return n < 10 ? "0" + n : String(n); }
       function tick() {
         var now = Date.now();
@@ -251,9 +435,9 @@
           var m = Math.floor((s % 3600) / 60);
           el.textContent = "距離出發還有 " + d + " 天 " + pad(h) + " 時 " + pad(m) + " 分 " + pad(s % 60) + " 秒";
         } else if (now <= end) {
-          el.textContent = "旅程進行中 🎌";
+          el.textContent = "旅程進行中";
         } else {
-          el.textContent = "旅程結束,歡迎回憶 ✨";
+          el.textContent = "旅程結束,歡迎慢慢回味";
           clearInterval(timer);
         }
       }
