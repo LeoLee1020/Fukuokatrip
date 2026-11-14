@@ -53,6 +53,7 @@
       display: inline-block; margin-top: 16px; padding: 6px 16px;
       background: var(--accent-soft); color: var(--accent);
       border-radius: 999px; font-weight: 600; font-size: .95rem;
+      font-variant-numeric: tabular-nums;
     }
 
     nav.days {
@@ -235,17 +236,29 @@
         '<ul class="timeline">' + d.items.map(renderItem).join("") + "</ul></section>";
     }).join("");
 
-    // 倒數計時(以台灣時間 2027/1/9 為出發日)
+    // 倒數計時(精準到秒):以台灣時間 2027/1/9 07:45 起飛為準
     (function () {
       var el = document.getElementById("countdown");
-      var now = new Date();
-      var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      var start = new Date(2027, 0, 9);
-      var end = new Date(2027, 0, 12);
-      var diff = Math.round((start - today) / 86400000);
-      if (diff > 0) el.textContent = "距離出發還有 " + diff + " 天";
-      else if (today <= end) el.textContent = "旅程進行中 🎌";
-      else el.textContent = "旅程結束,歡迎回憶 ✨";
+      var start = new Date("2027-01-09T07:45:00+08:00").getTime(); // 出發(JX842 起飛)
+      var end = new Date("2027-01-12T15:00:00+08:00").getTime();   // 回到家
+      function pad(n) { return n < 10 ? "0" + n : String(n); }
+      function tick() {
+        var now = Date.now();
+        if (now < start) {
+          var s = Math.floor((start - now) / 1000);
+          var d = Math.floor(s / 86400);
+          var h = Math.floor((s % 86400) / 3600);
+          var m = Math.floor((s % 3600) / 60);
+          el.textContent = "距離出發還有 " + d + " 天 " + pad(h) + " 時 " + pad(m) + " 分 " + pad(s % 60) + " 秒";
+        } else if (now <= end) {
+          el.textContent = "旅程進行中 🎌";
+        } else {
+          el.textContent = "旅程結束,歡迎回憶 ✨";
+          clearInterval(timer);
+        }
+      }
+      var timer = setInterval(tick, 1000);
+      tick();
     })();
   </script>
 </body>
