@@ -228,6 +228,15 @@
     .rec .tag.add { color: var(--red); }
     .rec .desc { color: var(--muted); font-size: .92rem; line-height: 1.65; margin-top: 2px; }
 
+    /* ---------- 美食總覽 ---------- */
+    .food { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px dotted var(--line); }
+    .food .name { min-width: 0; }
+    .food .tag { flex: none; margin-right: 0; white-space: nowrap; }
+    .food .tag.have { color: var(--blue); }
+    .food .tag.alt { color: var(--muted); }
+    .food-extra dt { font-weight: 800; color: var(--blue); }
+    @media (max-width: 420px) { .food { flex-direction: column; gap: 2px; } }
+
     footer { margin-top: 56px; padding: 30px 0 44px; text-align: center; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
     footer .yoi { font-size: 1.1rem; color: var(--ink); letter-spacing: .3em; margin-bottom: 4px; }
   </style>
@@ -262,6 +271,7 @@
       <span class="sep" aria-hidden="true"></span>
       <a href="#weather">天氣</a>
       <a href="#recs">推薦</a>
+      <a href="#food">美食</a>
       <a href="#tips">小提醒</a>
       <a href="#packing">行李清單</a>
     </div>
@@ -323,6 +333,17 @@
       <div class="block-title"><h2>推薦必逛</h2></div>
       <p class="lead">標「已在行程」的是你排好的，標「建議加入」的可以看時間與體力再加。</p>
       <div id="recs-list"></div>
+    </section>
+
+    <section class="block" id="food">
+      <div class="block-title"><h2>美食總覽</h2></div>
+      <p class="lead">標「已在行程」的是你排好的餐廳，標「備選」的是想吃時可以換進去的。點店名可以開 Google 地圖。</p>
+      <div id="food-list"></div>
+      <div class="group food-extra tips">
+        <h3>還可以留意的福岡味</h3>
+        <p class="gnote">這幾樣不一定要找特定店家，逛到時可以試試。</p>
+        <dl id="food-extra"></dl>
+      </div>
     </section>
 
     <section class="block tips" id="tips">
@@ -563,6 +584,68 @@
         if (data.daily) renderWx(data.daily);
       })
       .catch(function () { /* 連不上就維持一月氣候說明 */ });
+
+    // ============ 美食總覽 ============
+    // status: have(已在行程,when 寫哪一天與哪一餐) / alt(備選,when 可寫區域)
+    var FOOD = [
+      { g: "拉麵", items: [
+        { name: "一蘭拉麵 總本店", q: "一蘭拉麵 總本店", status: "alt" },
+        { name: "一蘭 太宰府參道店", q: "一蘭 太宰府參道店", status: "have", when: "三日目午餐" },
+        { name: "一蘭拉麵 天神西通店", q: "一蘭拉麵 天神西通店", status: "have", when: "二日目午餐擇一" },
+        { name: "博多拉麵 ShinShin 天神本店", q: "博多拉麵 ShinShin 天神本店", status: "have", when: "一日目、二日目午餐擇一" },
+        { name: "麵屋兼虎 天神本店", q: "麵屋兼虎 天神本店", status: "have", when: "一日目午餐擇一" },
+        { name: "麵屋Gaga 天神店", q: "麵屋Gaga 天神店", status: "have", when: "二日目午餐擇一" },
+        { name: "博多一双拉麵店(中洲店)", q: "博多一双拉麵店 中洲店", status: "have", when: "一日目午餐擇一" },
+        { name: "博多一幸舍", q: "博多一幸舍", status: "have", when: "一日目午餐擇一" }
+      ] },
+      { g: "鍋物", items: [
+        { name: "博多牛腸鍋 樂天地博多站前店", q: "博多牛腸鍋 樂天地 博多站前店", status: "alt" },
+        { name: "博多牛雜鍋前田屋 博多店", q: "博多牛雜鍋前田屋 博多店", status: "have", when: "一日目晚餐" },
+        { name: "牛腸鍋 一藤", q: "牛腸鍋 一藤", status: "alt" },
+        { name: "博多水炊鍋專門 橙", q: "博多水炊鍋専門 橙", status: "have", when: "二日目晚餐" }
+      ] },
+      { g: "燒肉與牛肉料理", items: [
+        { name: "肉屋肉一 博多店", q: "肉屋肉一 博多店", status: "have", when: "三日目晚餐" },
+        { name: "烤肉店 石原牛", q: "石原牛 烤肉", status: "alt" },
+        { name: "元村炸牛排 福岡天神西通店", q: "元村炸牛排 福岡天神西通店", status: "alt", when: "天神" }
+      ] },
+      { g: "麵包、可頌與甜甜圈", items: [
+        { name: "Dacomecca", q: "Dacomecca", status: "alt" },
+        { name: "MIGNON 博多店", q: "MIGNON 博多店", status: "have", when: "一日目逛博多車站" },
+        { name: "The Full Full Hakata", q: "The Full Full Hakata", status: "have", when: "二日目早餐" },
+        { name: "Bread, Espresso & Hakata", q: "Bread, Espresso & Hakata", status: "alt" },
+        { name: "I'm donut? 福岡店", q: "I'm donut? 福岡店", status: "alt" },
+        { name: "Pain Stock Tenjin", q: "Pain Stock Tenjin", status: "alt", when: "天神" }
+      ] },
+      { g: "咖啡與早餐", items: [
+        { name: "Sabataro", q: "Sabataro 福岡", status: "alt" },
+        { name: "Fuk Coffee", q: "Fuk Coffee 福岡", status: "have", when: "二日目咖啡" },
+        { name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸", status: "have", when: "四日目早餐" }
+      ] },
+      { g: "特色料理與甜點", items: [
+        { name: "元祖博多明太重", q: "元祖博多明太重", status: "have", when: "二日目午餐擇一" },
+        { name: "伊都King 天神店", q: "伊都King 天神店", status: "alt", when: "天神" }
+      ] }
+    ];
+
+    document.getElementById("food-list").innerHTML = FOOD.map(function (grp) {
+      var rows = grp.items.map(function (it) {
+        var st = it.status === "have"
+          ? '<span class="tag have">已在行程 ' + esc(it.when) + "</span>"
+          : '<span class="tag alt">備選' + (it.when ? " " + esc(it.when) : "") + "</span>";
+        return '<div class="food"><div class="name">' + link(it.name, it.q) + "</div>" + st + "</div>";
+      }).join("");
+      return '<div class="group"><h3>' + esc(grp.g) + "</h3>" + rows + "</div>";
+    }).join("");
+
+    var FOOD_EXTRA = [
+      { t: "博多一口餃子", d: "一口大小的煎餃，居酒屋和屋台常見，很適合配啤酒。" },
+      { t: "胡麻鯖", d: "用芝麻醬汁拌的生鯖魚，是福岡的特色料理。" },
+      { t: "福岡草莓", d: "福岡產的「あまおう」草莓，冬天是產季，甜點店和水果店都可以找找看。" }
+    ];
+    document.getElementById("food-extra").innerHTML = FOOD_EXTRA.map(function (x) {
+      return "<dt>" + esc(x.t) + "</dt><dd>" + esc(x.d) + "</dd>";
+    }).join("");
 
     // ============ 小提醒 ============
     document.getElementById("tips-list").innerHTML = TIPS.map(function (x) {
