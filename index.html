@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>福岡四日遊 2027</title>
+  <meta name="description" content="2027/1/9 – 1/12 福岡 4 天 3 夜行程:博多、天神、太宰府">
+  <style>
+    :root {
+      --bg: #fbf8f3;
+      --text: #2a2623;
+      --muted: #7a726a;
+      --accent: #d6453d;
+      --accent-soft: #fbe9e7;
+      --card: #ffffff;
+      --border: #ece5da;
+      --flight: #2f6fed;
+      --meal: #d9822b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #171514;
+        --text: #f0ebe4;
+        --muted: #a39b91;
+        --accent: #ff7a70;
+        --accent-soft: #3a2220;
+        --card: #211e1c;
+        --border: #34302c;
+        --flight: #7ba3ff;
+        --meal: #f0a655;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+    body {
+      font-family: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+    .hero { padding: 48px 0 28px; text-align: center; }
+    .hero .sun {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--accent); margin: 0 auto 18px;
+      box-shadow: 0 0 0 10px var(--accent-soft);
+    }
+    .hero h1 { font-size: clamp(1.9rem, 7vw, 2.6rem); letter-spacing: .04em; }
+    .hero .dates { color: var(--muted); margin-top: 6px; }
+    .countdown {
+      display: inline-block; margin-top: 16px; padding: 6px 16px;
+      background: var(--accent-soft); color: var(--accent);
+      border-radius: 999px; font-weight: 600; font-size: .95rem;
+    }
+
+    nav.days {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+    }
+    nav.days .container { display: flex; gap: 8px; padding-top: 10px; padding-bottom: 10px; overflow-x: auto; }
+    nav.days a {
+      flex: 1 0 auto; text-align: center; padding: 6px 14px;
+      border: 1px solid var(--border); border-radius: 999px;
+      background: var(--card); font-size: .9rem; white-space: nowrap;
+    }
+    nav.days a:hover { border-color: var(--accent); color: var(--accent); }
+
+    .day { padding: 32px 0 8px; }
+    .day-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+    .day-head .no { font-size: .85rem; font-weight: 700; color: #fff; background: var(--accent); padding: 2px 10px; border-radius: 6px; }
+    .day-head h2 { font-size: 1.4rem; }
+    .day-sub { color: var(--muted); font-size: .92rem; margin-bottom: 18px; }
+
+    .timeline { list-style: none; position: relative; padding-left: 4px; }
+    .timeline::before {
+      content: ""; position: absolute; left: 62px; top: 8px; bottom: 8px;
+      width: 2px; background: var(--border);
+    }
+    .item { display: flex; gap: 0; margin-bottom: 14px; position: relative; }
+    .time { width: 52px; flex: none; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; padding-top: 12px; font-size: .95rem; }
+    .dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--bg); border: 3px solid var(--accent);
+      flex: none; margin: 16px 12px 0 4px; position: relative; z-index: 1;
+    }
+    .item.flight .dot { border-color: var(--flight); }
+    .item.meal .dot { border-color: var(--meal); }
+    .card {
+      flex: 1; min-width: 0; background: var(--card);
+      border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px;
+    }
+    .card .name { font-weight: 600; }
+    .card .name a { border-bottom: 1px dashed var(--muted); }
+    .card .name a:hover { color: var(--accent); border-color: var(--accent); }
+    .card .note { color: var(--muted); font-size: .88rem; margin-top: 2px; }
+    .badge {
+      display: inline-block; font-size: .75rem; font-weight: 700;
+      padding: 1px 8px; border-radius: 6px; margin-right: 6px; vertical-align: 1px;
+    }
+    .badge.meal { background: rgba(217,130,43,.15); color: var(--meal); }
+    .badge.flight { background: rgba(47,111,237,.14); color: var(--flight); }
+    .badge.opt { background: var(--border); color: var(--muted); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chips a {
+      padding: 3px 12px; font-size: .88rem; border: 1px solid var(--border);
+      border-radius: 999px; background: var(--bg);
+    }
+    .chips a:hover { border-color: var(--meal); color: var(--meal); }
+    .pick-hint { color: var(--muted); font-size: .8rem; margin-top: 6px; }
+
+    footer { padding: 36px 0 48px; text-align: center; color: var(--muted); font-size: .85rem; }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="container">
+      <div class="sun"></div>
+      <h1>福岡四日遊</h1>
+      <p class="dates">2027/1/9(六)– 1/12(二)・4 天 3 夜</p>
+      <span class="countdown" id="countdown"></span>
+    </div>
+  </header>
+
+  <nav class="days">
+    <div class="container">
+      <a href="#day1">1/9 博多</a>
+      <a href="#day2">1/10 天神</a>
+      <a href="#day3">1/11 太宰府</a>
+      <a href="#day4">1/12 返程</a>
+    </div>
+  </nav>
+
+  <main class="container" id="app"></main>
+
+  <footer>
+    <div class="container">點店名或景點名稱可以直接開啟 Google 地圖<br>祝旅途愉快 ✈️</div>
+  </footer>
+
+  <script>
+    // 行程資料:要修改行程,改這裡就可以
+    // type: flight(航班) / meal(用餐);pick: true 表示多家擇一
+    var DAYS = [
+      {
+        id: "day1", no: "Day 1", date: "2027/1/9(六)", title: "博多",
+        sub: "早班機抵達,午餐後逛博多車站,晚上吃牛雜鍋",
+        items: [
+          { t: "06:45", name: "桃園機場第二航廈", type: "flight" },
+          { t: "07:45", name: "起飛", type: "flight", note: "航班 JX842" },
+          { t: "11:00", name: "福岡機場", type: "flight", q: "福岡機場" },
+          { t: "13:00", type: "meal", label: "午餐", pick: true,
+            names: ["ShinShin", "麵屋兼虎", "博多一雙", "博多一幸舍"] },
+          { t: "14:30", name: "博多車站逛街", note: "MIGNON 博多店", q: "MIGNON 博多店" },
+          { t: "19:00", type: "meal", label: "晚餐", name: "博多牛雜鍋前田屋 博多店", q: "博多牛雜鍋前田屋 博多店" }
+        ]
+      },
+      {
+        id: "day2", no: "Day 2", date: "2027/1/10(日)", title: "天神",
+        sub: "咖啡、神社、逛街,晚上水炊鍋",
+        items: [
+          { t: "10:00", type: "meal", label: "早餐", name: "The Full Full Hakata", q: "The Full Full Hakata" },
+          { t: "10:30", name: "Fuk Coffee", note: "咖啡", q: "Fuk Coffee 福岡" },
+          { t: "11:30", name: "櫛田神社", q: "櫛田神社" },
+          { t: "12:30", type: "meal", label: "午餐", pick: true,
+            names: ["ShinShin", "元祖博多明太重", "一蘭拉麵 天神西通店", "麵屋gaga"] },
+          { t: "14:00", name: "福岡 PARCO / Mina 天神", q: "福岡PARCO" },
+          { t: "16:00", name: "索拉利亞廣場", q: "Solaria Plaza 福岡" },
+          { t: "19:00", type: "meal", label: "晚餐", name: "博多水炊鍋專門 橙", q: "博多水炊鍋専門 橙" }
+        ]
+      },
+      {
+        id: "day3", no: "Day 3", date: "2027/1/11(一)", title: "太宰府",
+        sub: "參拜太宰府天滿宮,逛參道、吃梅枝餅,晚上吃肉",
+        items: [
+          { t: "09:00", name: "太宰府天滿宮", q: "太宰府天滿宮" },
+          { t: "10:30", name: "表參道散步", note: "梅枝餅", q: "太宰府表參道" },
+          { t: "12:00", type: "meal", label: "午餐", name: "一蘭 太宰府參道店", q: "一蘭 太宰府參道店" },
+          { t: "13:00", name: "寶滿宮竈門神社", q: "寶滿宮竈門神社" },
+          { t: "15:00", name: "博多運河城", optional: "天神可去可不去", q: "博多運河城" },
+          { t: "18:00", type: "meal", label: "晚餐", name: "肉屋肉一 博多店", q: "肉屋肉一 博多店" }
+        ]
+      },
+      {
+        id: "day4", no: "Day 4", date: "2027/1/12(二)", title: "返程",
+        sub: "吃完海鮮早餐,搭機回家",
+        items: [
+          { t: "07:30", type: "meal", label: "早餐", name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸" },
+          { t: "08:30", name: "博多車站", q: "博多車站" },
+          { t: "09:00", name: "福岡機場", type: "flight", q: "福岡機場" },
+          { t: "12:10", name: "起飛", type: "flight" },
+          { t: "13:50", name: "桃園機場第二航廈", type: "flight" },
+          { t: "15:00", name: "溫暖的家 🏠" }
+        ]
+      }
+    ];
+
+    function mapUrl(q) {
+      return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q.indexOf("福岡") >= 0 ? q : "福岡 " + q);
+    }
+    function esc(s) {
+      return String(s).replace(/[&<>"]/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+      });
+    }
+    function link(name, q) {
+      return '<a href="' + mapUrl(q || name) + '" target="_blank" rel="noopener">' + esc(name) + "</a>";
+    }
+
+    function renderItem(it) {
+      var cls = it.type ? " " + it.type : "";
+      var badge = "";
+      if (it.type === "meal") badge = '<span class="badge meal">' + esc(it.label || "用餐") + "</span>";
+      if (it.type === "flight") badge = '<span class="badge flight">航班</span>';
+      if (it.optional) badge += '<span class="badge opt">' + esc(it.optional) + "</span>";
+
+      var body = "";
+      if (it.names) {
+        body += '<div class="name">' + badge + "餐廳擇一</div>";
+        body += '<div class="chips">' + it.names.map(function (n) { return link(n); }).join("") + "</div>";
+        if (it.pick) body += '<div class="pick-hint">看當天排隊狀況挑一家</div>';
+      } else {
+        var nm = it.q ? link(it.name, it.q) : esc(it.name);
+        body += '<div class="name">' + badge + nm + "</div>";
+        if (it.note) body += '<div class="note">' + esc(it.note) + "</div>";
+      }
+      return '<li class="item' + cls + '"><div class="time">' + it.t + '</div><div class="dot"></div><div class="card">' + body + "</div></li>";
+    }
+
+    document.getElementById("app").innerHTML = DAYS.map(function (d) {
+      return '<section class="day" id="' + d.id + '">' +
+        '<div class="day-head"><span class="no">' + d.no + "</span><h2>" + esc(d.title) + "</h2><span class=\"day-sub\" style=\"margin:0\">" + esc(d.date) + "</span></div>" +
+        '<p class="day-sub">' + esc(d.sub) + "</p>" +
+        '<ul class="timeline">' + d.items.map(renderItem).join("") + "</ul></section>";
+    }).join("");
+
+    // 倒數計時(以台灣時間 2027/1/9 為出發日)
+    (function () {
+      var el = document.getElementById("countdown");
+      var now = new Date();
+      var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var start = new Date(2027, 0, 9);
+      var end = new Date(2027, 0, 12);
+      var diff = Math.round((start - today) / 86400000);
+      if (diff > 0) el.textContent = "距離出發還有 " + diff + " 天";
+      else if (today <= end) el.textContent = "旅程進行中 🎌";
+      else el.textContent = "旅程結束,歡迎回憶 ✨";
+    })();
+  </script>
+</body>
+</html>
