@@ -228,14 +228,36 @@
     .rec .tag.add { color: var(--red); }
     .rec .desc { color: var(--muted); font-size: .92rem; line-height: 1.65; margin-top: 2px; }
 
-    /* ---------- 美食總覽 ---------- */
-    .food { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px dotted var(--line); }
-    .food .name { min-width: 0; }
-    .food .tag { flex: none; margin-right: 0; white-space: nowrap; }
-    .food .tag.have { color: var(--blue); }
-    .food .tag.alt { color: var(--muted); }
+    /* ---------- 美食總覽(可左右滑動的卡片) ---------- */
+    .row-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .row-tools { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .8rem; }
+    .row-tools button {
+      font: inherit; width: 28px; height: 28px; line-height: 1; cursor: pointer;
+      color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 2px;
+    }
+    .row-tools button:hover { border-color: var(--red); color: var(--red); }
+    @media (hover: none) { .row-tools button { display: none; } }
+    .food-row {
+      display: flex; gap: 12px; overflow-x: auto; margin: 10px -20px 0; padding: 2px 20px 14px;
+      scroll-snap-type: x mandatory; scroll-padding: 0 20px;
+      -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+    }
+    .fcard {
+      flex: none; width: 200px; scroll-snap-align: start; display: flex; flex-direction: column;
+      background: var(--card); border: 1px solid var(--line); border-radius: 3px; overflow: hidden;
+    }
+    .thumb { height: 92px; display: grid; place-content: center; background: rgba(127, 127, 127, .09); color: var(--blue); }
+    .thumb svg { width: 108px; height: 72px; display: block; }
+    .thumb img { width: 200px; height: 92px; object-fit: cover; display: block; }
+    .fbody { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .fname { font-weight: 800; font-size: .98rem; line-height: 1.45; }
+    .fname a { border-bottom: 1px solid var(--line); }
+    .fname a:hover { color: var(--red); border-bottom-color: var(--red); }
+    .fdesc { color: var(--muted); font-size: .86rem; line-height: 1.65; flex: 1; }
+    .fcard .tag { align-self: flex-start; margin-right: 0; white-space: normal; line-height: 1.6; padding: 0 7px; }
+    .fcard .tag.have { color: var(--blue); }
+    .fcard .tag.alt { color: var(--muted); }
     .food-extra dt { font-weight: 800; color: var(--blue); }
-    @media (max-width: 420px) { .food { flex-direction: column; gap: 2px; } }
 
     footer { margin-top: 56px; padding: 30px 0 44px; text-align: center; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
     footer .yoi { font-size: 1.1rem; color: var(--ink); letter-spacing: .3em; margin-bottom: 4px; }
@@ -337,7 +359,7 @@
 
     <section class="block" id="food">
       <div class="block-title"><h2>美食總覽</h2></div>
-      <p class="lead">標「已在行程」的是你排好的餐廳，標「備選」的是想吃時可以換進去的。點店名可以開 Google 地圖。</p>
+      <p class="lead">每一類都可以往右滑看更多。標「已在行程」的是你排好的，標「備選」的是想吃時可以換進去的。點店名開 Google 地圖。簡介是依一般印象寫的，菜單和營業時間請以地圖或店家為準。</p>
       <div id="food-list"></div>
       <div class="group food-extra tips">
         <h3>還可以留意的福岡味</h3>
@@ -587,56 +609,90 @@
 
     // ============ 美食總覽 ============
     // status: have(已在行程,when 寫哪一天與哪一餐) / alt(備選,when 可寫區域)
+    // kind: 小插圖種類。想換成真的照片,在該店加上 img: "images/檔名.jpg" 即可
     var FOOD = [
       { g: "拉麵", items: [
-        { name: "一蘭拉麵 總本店", q: "一蘭拉麵 總本店", status: "alt" },
-        { name: "一蘭 太宰府參道店", q: "一蘭 太宰府參道店", status: "have", when: "三日目午餐" },
-        { name: "一蘭拉麵 天神西通店", q: "一蘭拉麵 天神西通店", status: "have", when: "二日目午餐擇一" },
-        { name: "博多拉麵 ShinShin 天神本店", q: "博多拉麵 ShinShin 天神本店", status: "have", when: "一日目、二日目午餐擇一" },
-        { name: "麵屋兼虎 天神本店", q: "麵屋兼虎 天神本店", status: "have", when: "一日目午餐擇一" },
-        { name: "麵屋Gaga 天神店", q: "麵屋Gaga 天神店", status: "have", when: "二日目午餐擇一" },
-        { name: "博多一双拉麵店(中洲店)", q: "博多一双拉麵店 中洲店", status: "have", when: "一日目午餐擇一" },
-        { name: "博多一幸舍", q: "博多一幸舍", status: "have", when: "一日目午餐擇一" }
+        { name: "一蘭拉麵 總本店", q: "一蘭拉麵 總本店", kind: "ramen", status: "alt", d: "一蘭的總本店，在中洲。想吃發源地的話可以換進行程。" },
+        { name: "一蘭 太宰府參道店", q: "一蘭 太宰府參道店", kind: "ramen", status: "have", when: "三日目午餐", d: "在太宰府參道上，逛完天滿宮順路就能吃。" },
+        { name: "一蘭拉麵 天神西通店", q: "一蘭拉麵 天神西通店", kind: "ramen", status: "have", when: "二日目午餐擇一", d: "天神逛街時的午餐選項。" },
+        { name: "博多拉麵 ShinShin 天神本店", q: "博多拉麵 ShinShin 天神本店", kind: "ramen", status: "have", when: "一、二日目午餐擇一", d: "博多拉麵人氣店，這間是天神本店。" },
+        { name: "麵屋兼虎 天神本店", q: "麵屋兼虎 天神本店", kind: "ramen", status: "have", when: "一日目午餐擇一", d: "豚骨拉麵名店，這間是天神本店。" },
+        { name: "麵屋Gaga 天神店", q: "麵屋Gaga 天神店", kind: "ramen", status: "have", when: "二日目午餐擇一", d: "天神的拉麵店，午餐選項之一。" },
+        { name: "博多一双拉麵店(中洲店)", q: "博多一双拉麵店 中洲店", kind: "ramen", status: "have", when: "一日目午餐擇一", d: "中洲店，博多豚骨拉麵。" },
+        { name: "博多一幸舍", q: "博多一幸舍", kind: "ramen", status: "have", when: "一日目午餐擇一", d: "博多豚骨拉麵，一日目午餐的選項之一。" }
       ] },
       { g: "鍋物", items: [
-        { name: "博多牛腸鍋 樂天地博多站前店", q: "博多牛腸鍋 樂天地 博多站前店", status: "alt" },
-        { name: "博多牛雜鍋前田屋 博多店", q: "博多牛雜鍋前田屋 博多店", status: "have", when: "一日目晚餐" },
-        { name: "牛腸鍋 一藤", q: "牛腸鍋 一藤", status: "alt" },
-        { name: "博多水炊鍋專門 橙", q: "博多水炊鍋専門 橙", status: "have", when: "二日目晚餐" }
+        { name: "博多牛腸鍋 樂天地 博多站前店", q: "博多牛腸鍋 樂天地 博多站前店", kind: "nabe", status: "alt", d: "福岡有名的牛腸鍋，在博多站前，離住宿近。" },
+        { name: "博多牛雜鍋前田屋 博多店", q: "博多牛雜鍋前田屋 博多店", kind: "nabe", status: "have", when: "一日目晚餐", d: "牛腸鍋名店，抵達福岡的第一頓晚餐。" },
+        { name: "牛腸鍋 一藤", q: "牛腸鍋 一藤", kind: "nabe", status: "alt", d: "牛腸鍋店，想換一家吃的時候可以選。" },
+        { name: "博多水炊鍋專門 橙", q: "博多水炊鍋専門 橙", kind: "nabe", status: "have", when: "二日目晚餐", d: "水炊是福岡的雞肉鍋，湯頭白濁濃郁，適合冬天。" }
       ] },
       { g: "燒肉與牛肉料理", items: [
-        { name: "肉屋肉一 博多店", q: "肉屋肉一 博多店", status: "have", when: "三日目晚餐" },
-        { name: "烤肉店 石原牛", q: "石原牛 烤肉", status: "alt" },
-        { name: "元村炸牛排 福岡天神西通店", q: "元村炸牛排 福岡天神西通店", status: "alt", when: "天神" }
+        { name: "肉屋肉一 博多店", q: "肉屋肉一 博多店", kind: "meat", status: "have", when: "三日目晚餐", d: "肉料理店，太宰府一整天之後的晚餐。" },
+        { name: "烤肉店 石原牛", q: "石原牛 烤肉", kind: "meat", status: "alt", d: "燒肉店，想吃燒肉時的備選。" },
+        { name: "元村炸牛排 福岡天神西通店", q: "元村炸牛排 福岡天神西通店", kind: "meat", status: "alt", when: "天神", d: "炸牛排專賣店，在天神西通，逛街時順路。" }
       ] },
       { g: "麵包、可頌與甜甜圈", items: [
-        { name: "Dacomecca", q: "Dacomecca", status: "alt" },
-        { name: "MIGNON 博多店", q: "MIGNON 博多店", status: "have", when: "一日目逛博多車站" },
-        { name: "The Full Full Hakata", q: "The Full Full Hakata", status: "have", when: "二日目早餐" },
-        { name: "Bread, Espresso & Hakata", q: "Bread, Espresso & Hakata", status: "alt" },
-        { name: "I'm donut? 福岡店", q: "I'm donut? 福岡店", status: "alt" },
-        { name: "Pain Stock Tenjin", q: "Pain Stock Tenjin", status: "alt", when: "天神" }
+        { name: "Dacomecca", q: "Dacomecca", kind: "bread", status: "alt", d: "麵包店，想買點心或早餐時的備選。" },
+        { name: "MIGNON 博多店", q: "MIGNON 博多店", kind: "bread", status: "have", when: "一日目逛博多車站", d: "麵包店，一日目逛博多車站時順路買。" },
+        { name: "The Full Full Hakata", q: "The Full Full Hakata", kind: "bread", status: "have", when: "二日目早餐", d: "二日目的早餐，先吃飽再去逛天神。" },
+        { name: "Bread, Espresso & Hakata", q: "Bread, Espresso & Hakata", kind: "bread", status: "alt", d: "麵包配咖啡，想吃輕食時的備選。" },
+        { name: "I'm donut? 福岡店", q: "I'm donut? 福岡店", kind: "donut", status: "alt", d: "以生甜甜圈聞名，口感鬆軟。" },
+        { name: "Pain Stock Tenjin", q: "Pain Stock Tenjin", kind: "bread", status: "alt", when: "天神", d: "天神的麵包店，逛街時可以順路買。" }
       ] },
       { g: "咖啡與早餐", items: [
-        { name: "Sabataro", q: "Sabataro 福岡", status: "alt" },
-        { name: "Fuk Coffee", q: "Fuk Coffee 福岡", status: "have", when: "二日目咖啡" },
-        { name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸", status: "have", when: "四日目早餐" }
+        { name: "Sabataro", q: "Sabataro 福岡", kind: "coffee", status: "alt", d: "咖啡與早餐，想換地方喝咖啡時的備選。" },
+        { name: "Fuk Coffee", q: "Fuk Coffee 福岡", kind: "coffee", status: "have", when: "二日目咖啡", d: "二日目上午的咖啡時間。" },
+        { name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸", kind: "fish", status: "have", when: "四日目早餐", d: "海鮮料理，回程前的早餐。" }
       ] },
       { g: "特色料理與甜點", items: [
-        { name: "元祖博多明太重", q: "元祖博多明太重", status: "have", when: "二日目午餐擇一" },
-        { name: "伊都King 天神店", q: "伊都King 天神店", status: "alt", when: "天神" }
+        { name: "元祖博多明太重", q: "元祖博多明太重", kind: "mentai", status: "have", when: "二日目午餐擇一", d: "明太子是福岡名產，這家把它做成明太子飯盒。" },
+        { name: "伊都King 天神店", q: "伊都King 天神店", kind: "berry", status: "alt", when: "天神", d: "以草莓甜點聞名，天神店，逛街時可以順路。" }
       ] }
     ];
 
-    document.getElementById("food-list").innerHTML = FOOD.map(function (grp) {
-      var rows = grp.items.map(function (it) {
+    // 小插圖(單色線稿 + 一顆朱紅的圓,呼應首頁的日之丸感)
+    var SUN = '<circle cx="60" cy="40" r="30" fill="#c4302b" fill-opacity=".14" stroke="none"/>';
+    var ICONS = {
+      ramen: '<path d="M20 38H100C100 62 82 72 60 72C38 72 20 62 20 38Z"/><path d="M32 38q7-9 14 0t14 0 14 0 14 0"/><circle cx="76" cy="32" r="6"/><path d="M78 8L100 34M88 6L110 30"/><path d="M46 24q-4-6 0-12M60 24q-4-6 0-12"/>',
+      nabe: '<path d="M24 38H96V58Q96 70 84 70H36Q24 70 24 58Z"/><path d="M34 38Q60 14 86 38"/><path d="M24 46H15M96 46H105"/><circle cx="60" cy="19" r="3"/><path d="M44 12q-3-5 0-9M76 12q-3-5 0-9"/>',
+      meat: '<path d="M30 44C28 26 52 20 70 24C92 28 98 46 88 58C76 70 44 68 34 58C31 54 30 49 30 44Z"/><path d="M48 40q10-6 20 0M46 52q14-6 28 0"/><circle cx="82" cy="40" r="2"/>',
+      bread: '<path d="M18 56C24 30 96 30 102 56C92 52 86 54 80 60C70 52 50 52 40 60C34 54 28 52 18 56Z"/><path d="M44 36L50 52M60 33V50M76 36L70 52"/>',
+      donut: '<circle cx="60" cy="42" r="28"/><circle cx="60" cy="42" r="9"/><path d="M42 26l4 3M74 24l-3 4M84 44l-5 1M36 50l5-1M52 64l1-5M70 62l-2-5"/>',
+      coffee: '<path d="M30 34H82V54Q82 68 68 68H44Q30 68 30 54Z"/><path d="M82 40H90Q98 40 98 48Q98 56 88 56H82"/><path d="M22 72H90"/><path d="M48 26q-4-6 0-12M64 26q-4-6 0-12"/>',
+      fish: '<path d="M20 40Q48 16 80 40Q48 64 20 40Z"/><path d="M80 40L102 26V54Z"/><circle cx="40" cy="36" r="2"/><path d="M54 30q6 10 0 20"/>',
+      mentai: '<path d="M20 40H100C100 62 82 72 60 72C38 72 20 62 20 40Z"/><path d="M28 40Q60 8 92 40"/><circle cx="46" cy="32" r="2"/><circle cx="60" cy="26" r="2"/><circle cx="74" cy="32" r="2"/><circle cx="54" cy="36" r="2"/><circle cx="68" cy="37" r="2"/>',
+      berry: '<path d="M60 68C34 54 28 36 38 28C48 22 56 28 60 30C64 28 72 22 82 28C92 36 86 54 60 68Z"/><path d="M50 24L60 14L70 24"/><circle cx="52" cy="40" r="1.6"/><circle cx="68" cy="40" r="1.6"/><circle cx="60" cy="50" r="1.6"/>'
+    };
+    function foodThumb(it) {
+      if (it.img) return '<img src="' + esc(it.img) + '" alt="' + esc(it.name) + '" loading="lazy">';
+      return '<svg viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        SUN + (ICONS[it.kind] || ICONS.ramen) + "</svg>";
+    }
+
+    document.getElementById("food-list").innerHTML = FOOD.map(function (grp, gi) {
+      var cards = grp.items.map(function (it) {
         var st = it.status === "have"
           ? '<span class="tag have">已在行程 ' + esc(it.when) + "</span>"
           : '<span class="tag alt">備選' + (it.when ? " " + esc(it.when) : "") + "</span>";
-        return '<div class="food"><div class="name">' + link(it.name, it.q) + "</div>" + st + "</div>";
+        return '<article class="fcard"><div class="thumb">' + foodThumb(it) + "</div>" +
+          '<div class="fbody"><div class="fname">' + link(it.name, it.q) + "</div>" +
+          '<p class="fdesc">' + esc(it.d) + "</p>" + st + "</div></article>";
       }).join("");
-      return '<div class="group"><h3>' + esc(grp.g) + "</h3>" + rows + "</div>";
+      return '<div class="group"><div class="row-head"><h3>' + esc(grp.g) + "</h3>" +
+        '<div class="row-tools"><span>往右滑</span>' +
+        '<button type="button" data-row="' + gi + '" data-dir="-1" aria-label="上一個">‹</button>' +
+        '<button type="button" data-row="' + gi + '" data-dir="1" aria-label="下一個">›</button></div></div>' +
+        '<div class="food-row" id="food-row-' + gi + '" tabindex="0" role="group" aria-label="' + esc(grp.g) + '">' + cards + "</div></div>";
     }).join("");
+
+    document.getElementById("food-list").addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-row]");
+      if (!btn) return;
+      var row = document.getElementById("food-row-" + btn.dataset.row);
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      row.scrollBy({ left: Number(btn.dataset.dir) * row.clientWidth * 0.85, behavior: reduce ? "auto" : "smooth" });
+    });
 
     var FOOD_EXTRA = [
       { t: "博多一口餃子", d: "一口大小的煎餃，居酒屋和屋台常見，很適合配啤酒。" },
