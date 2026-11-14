@@ -94,17 +94,33 @@
     nav.top a:hover { border-bottom-color: var(--red); }
     nav.top .sep { flex: none; width: 1px; background: var(--line); }
 
-    /* ---------- 區塊標題 ---------- */
-    .block { padding: 44px 0 8px; }
-    .block-title::before {
-      content: ""; display: block; width: 36px; height: 3px;
-      background: var(--indigo); margin-bottom: 14px;
+    /* ---------- 區塊標題(可收合) ---------- */
+    .expand-all { display: flex; justify-content: flex-end; padding: 20px 0 12px; }
+    .block { border-bottom: 1px solid var(--line); }
+    .expand-all + .block { border-top: 1px solid var(--line); }
+    .block-title {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 22px 0; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
     }
-    @media (prefers-color-scheme: dark) { .block-title::before { background: var(--blue); } }
-    .block-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; flex-direction: row; }
-    .block-title::before { flex-basis: 100%; }
-    .block-title h2 { font-size: 1.7rem; font-weight: 800; letter-spacing: .06em; }
+    .block-title::after {
+      content: ""; flex: none; width: 9px; height: 9px; margin: 0 4px 0 auto;
+      border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+      transform: translateY(-2px) rotate(45deg); transition: transform .3s ease;
+    }
+    .block.open > .block-title::after { transform: translateY(2px) rotate(-135deg); }
+    .block-title:hover h2 { color: var(--red); }
+    .block-title h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: .06em; transition: color .2s; }
     .block-title time, .block-title span.meta { color: var(--muted); font-size: .92rem; }
+    .block-body {
+      display: grid; grid-template-rows: 0fr; visibility: hidden;
+      transition: grid-template-rows .45s ease, visibility 0s linear .45s;
+    }
+    .block.open > .block-body { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .45s ease, visibility 0s; }
+    .block-inner { overflow: hidden; min-height: 0; margin: 0 -20px; padding: 0 20px; }
+    .block-inner::after { content: ""; display: block; height: 26px; }
+    @media (prefers-reduced-motion: reduce) {
+      .block-body, .block.open > .block-body, .block-title::after { transition: none; }
+    }
     .day-no {
       font-size: .82rem; font-weight: 600; background: var(--red); color: #fff;
       padding: 1px 9px; border-radius: 2px; letter-spacing: .1em;
@@ -261,7 +277,10 @@
 
     /* ---------- 捲動浮現 ---------- */
     @media (prefers-reduced-motion: no-preference) {
-      .reveal { opacity: 0; transform: translateY(16px); transition: opacity .55s ease, transform .55s cubic-bezier(.2, .7, .2, 1); }
+      .reveal {
+        opacity: 0; transform: translateY(44px) scale(.96);
+        transition: opacity .5s ease, transform .75s cubic-bezier(.34, 1.5, .64, 1);
+      }
       .reveal.in { opacity: 1; transform: none; }
     }
 
@@ -306,6 +325,7 @@
   </nav>
 
   <main class="container">
+    <div class="expand-all"><button type="button" class="textbtn" id="toggle-all">全部展開</button></div>
     <section class="block" id="flights">
       <div class="block-title"><h2>航班資訊</h2><span class="meta">星宇航空</span></div>
       <p class="lead">福岡比台灣快 1 小時，下面的時間都是當地時間。</p>
@@ -789,46 +809,101 @@
       tick();
     })();
 
-    // ============ 捲動浮現:內容進入畫面時,一個接一個出現 ============
+    // ============ 收合區塊 + 浮現動畫 ============
     (function () {
-      if (!("IntersectionObserver" in window)) return;
-      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // 區塊內會「跳出來」的內容(標題列另外處理)
+      var BODY_SEL = ".lead, .item, .flt, .fnote, .hotel-name, .wx-now, .wx-cell, .wx-note, .rec, " +
+        ".group > h3, .group > .gnote, .group .row-head, .group > ul > li, .tips dt, .tips dd, .progress, .food-row .fcard";
 
-      var sel = ".block-title, .lead, .item, .flt, .fnote, .hotel-name, .wx-now, .wx-cell, .wx-note, " +
-        ".rec, .group > h3, .group > .gnote, .group .row-head, .group > ul > li, .tips dt, .tips dd, .progress";
-      var singles = Array.prototype.slice.call(document.querySelectorAll(sel));
-      var rows = Array.prototype.slice.call(document.querySelectorAll(".food-row"));
+      var sections = Array.prototype.slice.call(document.querySelectorAll("main .block"));
+      var allBtn = document.getElementById("toggle-all");
 
-      singles.forEach(function (el) { el.classList.add("reveal"); });
-      rows.forEach(function (r) {
-        r.querySelectorAll(".fcard").forEach(function (c) { c.classList.add("reveal"); });
-      });
+      function syncAll() {
+        var anyClosed = sections.some(function (s) { return !s.classList.contains("open"); });
+        allBtn.textContent = anyClosed ? "全部展開" : "全部收起";
+        return anyClosed;
+      }
 
-      function show(el, delay, instant) {
-        var targets = el.classList.contains("food-row") ? Array.prototype.slice.call(el.querySelectorAll(".fcard")) : [el];
-        targets.forEach(function (t, i) {
-          if (instant) t.style.transition = "none";
-          else t.style.transitionDelay = Math.min(delay + (targets.length > 1 ? i * 80 : 0), 450) + "ms";
-          t.classList.add("in");
+      // 展開時,內容一個接一個跳出來(每次展開都會重播)
+      function play(sec) {
+        if (reduce) return;
+        var els = Array.prototype.slice.call(sec.querySelectorAll(BODY_SEL));
+        els.forEach(function (el) { el.style.transition = "none"; el.style.transitionDelay = "0ms"; el.classList.remove("in"); });
+        void sec.offsetWidth; // 讓瀏覽器先套用「還沒出現」的狀態
+        els.forEach(function (el, i) {
+          el.style.transition = "";
+          el.style.transitionDelay = (140 + Math.min(i * 90, 900)) + "ms";
+          el.classList.add("in");
         });
       }
 
+      function setOpen(sec, open) {
+        sec.classList.toggle("open", open);
+        sec.querySelector(":scope > .block-title").setAttribute("aria-expanded", open ? "true" : "false");
+        if (open) play(sec);
+        syncAll();
+      }
+
+      // 把標題以外的內容包進可收合的容器
+      sections.forEach(function (sec) {
+        var title = sec.querySelector(":scope > .block-title");
+        var body = document.createElement("div");
+        var inner = document.createElement("div");
+        body.className = "block-body"; body.id = sec.id + "-body";
+        inner.className = "block-inner";
+        while (title.nextSibling) inner.appendChild(title.nextSibling);
+        body.appendChild(inner);
+        sec.appendChild(body);
+
+        title.setAttribute("role", "button");
+        title.setAttribute("tabindex", "0");
+        title.setAttribute("aria-expanded", "false");
+        title.setAttribute("aria-controls", body.id);
+        title.addEventListener("click", function () { setOpen(sec, !sec.classList.contains("open")); });
+        title.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); title.click(); }
+        });
+
+        if (!reduce) inner.querySelectorAll(BODY_SEL).forEach(function (el) { el.classList.add("reveal"); });
+      });
+
+      allBtn.addEventListener("click", function () {
+        var open = syncAll();
+        sections.forEach(function (s) { setOpen(s, open); });
+      });
+
+      // 導覽列點到某一區:自動展開那一區
+      document.querySelectorAll('nav.top a[href^="#"]').forEach(function (a) {
+        a.addEventListener("click", function () {
+          var sec = document.getElementById(a.getAttribute("href").slice(1));
+          if (sec && sec.classList.contains("block") && !sec.classList.contains("open")) setOpen(sec, true);
+        });
+      });
+      if (location.hash) {
+        var t = document.getElementById(location.hash.slice(1));
+        if (t && t.classList.contains("block")) setOpen(t, true);
+      }
+      syncAll();
+
+      // 標題列:往下滑時一個接一個跳出來
+      if (reduce || !("IntersectionObserver" in window)) return;
+      var titles = sections.map(function (s) { return s.querySelector(":scope > .block-title"); });
+      titles.forEach(function (t) { t.classList.add("reveal"); });
       var io = new IntersectionObserver(function (entries) {
         var n = 0;
         entries.forEach(function (en) {
+          var t = en.target;
           if (en.isIntersecting) {
-            show(en.target, Math.min(n * 70, 350), false);
-            n++;
-            io.unobserve(en.target);
+            t.style.transitionDelay = Math.min(n * 110, 550) + "ms";
+            t.classList.add("in");
+            n++; io.unobserve(t);
           } else if (en.boundingClientRect.top < 0) {
-            // 用導覽列直接跳到下面時,被跳過的上方內容立刻顯示,不留空白
-            show(en.target, 0, true);
-            io.unobserve(en.target);
+            t.style.transition = "none"; t.classList.add("in"); io.unobserve(t); // 跳過的上方標題直接顯示
           }
         });
-      }, { threshold: 0.1, rootMargin: "0px 0px -6% 0px" });
-
-      singles.concat(rows).forEach(function (el) { io.observe(el); });
+      }, { threshold: 0.1, rootMargin: "0px 0px -8% 0px" });
+      titles.forEach(function (t) { io.observe(t); });
     })();
   </script>
 </body>
