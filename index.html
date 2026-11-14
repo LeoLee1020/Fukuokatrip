@@ -279,6 +279,56 @@
     .fcard .tag.alt { color: var(--muted); }
     .food-extra dt { font-weight: 800; color: var(--blue); }
 
+    /* ---------- 背景動畫:飛機、雲、花瓣 ---------- */
+    .hero { position: relative; overflow: hidden; }
+    .hero .container { position: relative; z-index: 1; }
+    main, footer { position: relative; }
+    main { z-index: 1; }
+    .sky { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .cloud { position: absolute; width: 96px; height: 26px; border-radius: 30px; background: rgba(255, 255, 255, .09); }
+    .cloud::before, .cloud::after { content: ""; position: absolute; border-radius: 50%; background: inherit; }
+    .cloud::before { width: 42px; height: 42px; left: 16px; bottom: 8px; }
+    .cloud::after { width: 30px; height: 30px; left: 48px; bottom: 6px; }
+    .cloud.c1 { top: 16%; animation: drift 70s linear infinite; animation-delay: -20s; }
+    .cloud.c2 { top: 48%; transform: scale(.75); animation: drift 95s linear infinite; animation-delay: -60s; opacity: .8; }
+    .cloud.c3 { top: 72%; transform: scale(1.2); animation: drift 120s linear infinite; animation-delay: -35s; opacity: .7; }
+    @keyframes drift { from { left: -140px; } to { left: 105%; } }
+
+    .plane { position: absolute; left: 0; display: flex; align-items: center; will-change: transform; }
+    .plane svg { display: block; width: 100%; height: auto; }
+    .plane::before {
+      content: ""; position: absolute; right: 88%; top: 50%; height: 2px; width: 150px; transform: translateY(-50%);
+      background: linear-gradient(to left, currentColor, transparent);
+      -webkit-mask: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px 18px);
+      mask: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px 18px);
+    }
+    .hero-plane { top: 17%; width: 46px; color: rgba(255, 255, 255, .85); animation: fly 22s ease-in-out infinite; animation-delay: 1.4s; }
+    @keyframes fly {
+      0%   { transform: translate3d(-24vw, 0, 0) rotate(-5deg); }
+      45%  { transform: translate3d(124vw, -46px, 0) rotate(-5deg); }
+      100% { transform: translate3d(124vw, -46px, 0) rotate(-5deg); }
+    }
+    @keyframes fly-bg {
+      0%   { transform: translate3d(-24vw, 0, 0) rotate(-3deg); }
+      38%  { transform: translate3d(124vw, -9vh, 0) rotate(-3deg); }
+      100% { transform: translate3d(124vw, -9vh, 0) rotate(-3deg); }
+    }
+
+    .bg-fx { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .sky-plane { top: 24vh; width: 34px; color: var(--indigo); opacity: .16; animation: fly-bg 46s ease-in-out infinite; animation-delay: 5s; }
+    @media (prefers-color-scheme: dark) { .sky-plane { color: #cfd8ea; opacity: .14; } }
+    .petal { position: absolute; top: 0; will-change: transform; animation: fall linear infinite; }
+    .petal i { display: block; width: var(--s); height: calc(var(--s) * 1.2); background: #f2b2bd; opacity: .6; border-radius: 80% 0 80% 0; animation: sway ease-in-out infinite alternate; }
+    @media (prefers-color-scheme: dark) { .petal i { background: #c98a96; opacity: .45; } }
+    @keyframes fall {
+      0%   { transform: translate3d(0, -8vh, 0) rotate(0deg); opacity: 0; }
+      8%   { opacity: 1; }
+      92%  { opacity: 1; }
+      100% { transform: translate3d(var(--dx), 108vh, 0) rotate(var(--rot)); opacity: 0; }
+    }
+    @keyframes sway { from { transform: translateX(-14px) rotate(-18deg); } to { transform: translateX(14px) rotate(24deg); } }
+    @media (prefers-reduced-motion: reduce) { .sky, .bg-fx { display: none; } }
+
     /* ---------- 捲動浮現 ---------- */
     @media (prefers-reduced-motion: no-preference) {
       .reveal {
@@ -304,7 +354,16 @@
 </head>
 <body>
 
+  <div class="bg-fx" aria-hidden="true">
+    <div class="plane sky-plane"><svg viewBox="0 0 64 24" aria-hidden="true"><path fill="currentColor" d="M60 12C58 10.6 52 10 44 10L30 1H26L32 10L12 10.6L8 6H5L6 11L2 11.6V12.4L6 13L5 18H8L12 13.4L32 14L26 23H30L44 14C52 14 58 13.4 60 12Z"/></svg></div>
+    <div id="petals"></div>
+  </div>
+
   <header class="hero">
+    <div class="sky" aria-hidden="true">
+      <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+      <div class="plane hero-plane"><svg viewBox="0 0 64 24" aria-hidden="true"><path fill="currentColor" d="M60 12C58 10.6 52 10 44 10L30 1H26L32 10L12 10.6L8 6H5L6 11L2 11.6V12.4L6 13L5 18H8L12 13.4L32 14L26 23H30L44 14C52 14 58 13.4 60 12Z"/></svg></div>
+    </div>
     <div class="container">
       <div class="hero-inner">
         <h1>福岡</h1>
@@ -442,7 +501,7 @@
     // type: flight(航班) / meal(用餐);names: 多家擇一
     var DAYS = [
       {
-        id: "day1", no: "一日目", date: "2027/1/9 週六", emoji: "🛬", title: "博多",
+        id: "day1", no: "一日目", date: "2027/1/9 週六", title: "博多",
         sub: "早班機抵達，午餐後逛博多車站，晚上吃牛雜鍋。",
         items: [
           { t: "06:45", name: "桃園機場第二航廈", type: "flight" },
@@ -454,7 +513,7 @@
         ]
       },
       {
-        id: "day2", no: "二日目", date: "2027/1/10 週日", emoji: "🛍️", title: "天神",
+        id: "day2", no: "二日目", date: "2027/1/10 週日", title: "天神",
         sub: "咖啡、神社、逛街，晚上吃水炊鍋。",
         items: [
           { t: "10:00", type: "meal", label: "早餐", name: "The Full Full Hakata", q: "The Full Full Hakata" },
@@ -467,7 +526,7 @@
         ]
       },
       {
-        id: "day3", no: "三日目", date: "2027/1/11 週一", emoji: "⛩️", title: "太宰府",
+        id: "day3", no: "三日目", date: "2027/1/11 週一", title: "太宰府",
         sub: "參拜太宰府天滿宮，逛參道、吃梅枝餅，晚上吃肉。",
         items: [
           { t: "09:00", name: "太宰府天滿宮", q: "太宰府天滿宮" },
@@ -479,7 +538,7 @@
         ]
       },
       {
-        id: "day4", no: "四日目", date: "2027/1/12 週二", emoji: "🛫", title: "返程",
+        id: "day4", no: "四日目", date: "2027/1/12 週二", title: "返程",
         sub: "吃完海鮮早餐，搭機回家。",
         items: [
           { t: "07:30", type: "meal", label: "早餐", name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸" },
@@ -553,7 +612,7 @@
 
     document.getElementById("days").innerHTML = DAYS.map(function (d) {
       return '<section class="block" id="' + d.id + '">' +
-        '<div class="block-title"><span class="day-no">' + esc(d.no) + "</span><h2>" + (d.emoji ? d.emoji + " " : "") + esc(d.title) + "</h2><time>" + esc(d.date) + "</time></div>" +
+        '<div class="block-title"><span class="day-no">' + esc(d.no) + "</span><h2>" + esc(d.title) + "</h2><time>" + esc(d.date) + "</time></div>" +
         '<p class="lead">' + esc(d.sub) + "</p>" +
         '<ol class="timeline">' + d.items.map(renderItem).join("") + "</ol></section>";
     }).join("");
@@ -929,6 +988,30 @@
         });
       }, { threshold: 0.1, rootMargin: "0px 0px -14% 0px" });
       titles.forEach(function (t) { io.observe(t); });
+    })();
+
+    // ============ 背景花瓣 ============
+    (function () {
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var box = document.getElementById("petals");
+      var N = window.innerWidth < 600 ? 9 : 16;
+      function r(a, b) { return a + Math.random() * (b - a); }
+      for (var i = 0; i < N; i++) {
+        var p = document.createElement("span");
+        p.className = "petal";
+        var dur = r(16, 30);
+        p.style.left = r(0, 100) + "%";
+        p.style.animationDuration = dur + "s";
+        p.style.animationDelay = "-" + r(0, dur) + "s";   // 一開始就散在畫面各處
+        p.style.setProperty("--dx", r(-120, 120) + "px");
+        p.style.setProperty("--rot", r(180, 540) + "deg");
+        p.style.setProperty("--s", r(8, 13) + "px");
+        var leaf = document.createElement("i");
+        leaf.style.animationDuration = r(3, 6) + "s";
+        leaf.style.animationDelay = "-" + r(0, 5) + "s";
+        p.appendChild(leaf);
+        box.appendChild(p);
+      }
     })();
   </script>
 </body>
