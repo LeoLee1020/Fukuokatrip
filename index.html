@@ -286,7 +286,17 @@
         transition: opacity .5s ease, transform .75s cubic-bezier(.34, 1.5, .64, 1);
       }
       .reveal.in { opacity: 1; transform: none; }
+      /* 大標題:動作更大、更彈 */
+      .block-title.reveal {
+        transform: translateY(80px) scale(.86);
+        transition: opacity .45s ease, transform .95s cubic-bezier(.34, 1.9, .64, 1);
+      }
+      .block-title.reveal.in { transform: none; }
     }
+    /* 標題上方的紅色短線:標題跳出時從左邊劃開 */
+    .block::before { content: ""; display: block; width: 0; height: 3px; margin-top: -1px; background: var(--red); transition: width .8s ease .25s; }
+    .block.seen::before { width: 44px; }
+    @media (prefers-reduced-motion: reduce) { .block::before { width: 44px; transition: none; } }
 
     footer { margin-top: 56px; padding: 30px 0 44px; text-align: center; color: var(--muted); font-size: .88rem; border-top: 1px solid var(--line); }
     footer .yoi { font-size: 1.1rem; color: var(--ink); letter-spacing: .3em; margin-bottom: 4px; }
@@ -899,19 +909,25 @@
       if (reduce || !("IntersectionObserver" in window)) return;
       var titles = sections.map(function (s) { return s.querySelector(":scope > .block-title"); });
       titles.forEach(function (t) { t.classList.add("reveal"); });
+      function bar(t, on) { t.parentElement.classList.toggle("seen", on); }
       var io = new IntersectionObserver(function (entries) {
         var n = 0;
         entries.forEach(function (en) {
           var t = en.target;
           if (en.isIntersecting) {
-            t.style.transitionDelay = Math.min(n * 110, 550) + "ms";
-            t.classList.add("in");
-            n++; io.unobserve(t);
+            // 滑進畫面:跳出來(同時進來的幾個依序錯開)
+            t.style.transition = "";
+            t.style.transitionDelay = Math.min(n * 120, 600) + "ms";
+            t.classList.add("in"); bar(t, true); n++;
           } else if (en.boundingClientRect.top < 0) {
-            t.style.transition = "none"; t.classList.add("in"); io.unobserve(t); // 跳過的上方標題直接顯示
+            // 已經滑過去(在畫面上方):保持顯示,不重播
+            t.style.transition = "none"; t.classList.add("in"); bar(t, true);
+          } else {
+            // 還在畫面下方:先收回去,等下次滑到時再跳出來
+            t.style.transition = ""; t.style.transitionDelay = "0ms"; t.classList.remove("in"); bar(t, false);
           }
         });
-      }, { threshold: 0.1, rootMargin: "0px 0px -8% 0px" });
+      }, { threshold: 0.1, rootMargin: "0px 0px -14% 0px" });
       titles.forEach(function (t) { io.observe(t); });
     })();
   </script>
