@@ -319,6 +319,99 @@
     @keyframes sway { from { transform: translateX(-14px) rotate(-18deg); } to { transform: translateX(14px) rotate(24deg); } }
     @media (prefers-reduced-motion: reduce) { .sky, .bg-fx { display: none; } }
 
+    /* ---------- 動線地圖 ---------- */
+    .route-tabs { display: flex; gap: 8px; margin: 4px 0 12px; overflow-x: auto; padding-bottom: 2px; }
+    .route-tabs button {
+      font: inherit; font-size: .95rem; padding: 5px 15px; cursor: pointer; white-space: nowrap;
+      color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 2px;
+    }
+    .route-tabs button:hover { border-color: var(--red); }
+    .route-tabs button[aria-selected="true"] { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+    .route-card { border: 1px solid var(--line); background: var(--card); }
+    .route-svg { display: block; width: 100%; height: auto; }
+    .route-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-top: 1px dotted var(--line); min-height: 3.6em; }
+    .route-caption { flex: 1; font-size: .95rem; line-height: 1.55; }
+    .route-caption b { color: var(--blue); font-weight: 800; font-variant-numeric: tabular-nums; margin-right: .6em; }
+    .route-note { color: var(--muted); font-size: .8rem; margin-top: 8px; }
+    .route-steps { list-style: none; margin-top: 14px; }
+    .route-steps li { display: grid; grid-template-columns: 4.4rem 1fr; gap: 6px; padding: 8px 0; border-bottom: 1px dotted var(--line); color: var(--muted); transition: color .3s; }
+    .route-steps li .rt { font-variant-numeric: tabular-nums; }
+    .route-steps li.done { color: var(--ink); }
+    .route-steps li.on { color: var(--ink); font-weight: 600; }
+    .route-steps li.on .rt { color: var(--red); }
+
+    .m-land { fill: var(--paper); }
+    .m-sea { fill: var(--indigo); }
+    .m-sea-wave { fill: none; stroke: rgba(255, 255, 255, .22); stroke-width: 1; }
+    .m-sea-label { font-size: 9px; fill: rgba(255, 255, 255, .78); letter-spacing: .15em; }
+    .m-mount { fill: none; stroke: var(--muted); stroke-width: 1.3; opacity: .5; stroke-linecap: round; stroke-linejoin: round; }
+    .m-mlabel { font-size: 8.5px; fill: var(--muted); opacity: .85; }
+    .m-scale { fill: none; stroke: var(--muted); stroke-width: 1.3; }
+    .m-scale-t { font-size: 9px; fill: var(--muted); }
+    .m-base { fill: none; stroke: var(--line); stroke-width: 3; stroke-dasharray: 1 7; stroke-linecap: round; }
+    .m-path { fill: none; stroke: var(--red); stroke-width: 3; stroke-linecap: round; }
+    .m-node { opacity: 0; }
+    .m-node.show { opacity: 1; transition: opacity .3s; }
+    .m-node .ring { fill: var(--red); opacity: 0; }
+    .m-node .dot { fill: var(--card); stroke: var(--blue); stroke-width: 2.4; }
+    .m-node.show .dot { fill: var(--red); stroke: var(--red); }
+    .m-node .dot, .m-node .ring { transform-box: fill-box; transform-origin: center; }
+    .m-node.show .dot { animation: nodepop .55s cubic-bezier(.34, 1.8, .64, 1); }
+    .m-node.show .ring { animation: ringout 1.1s ease-out; }
+    .m-node text { font-size: 11.5px; fill: var(--ink); stroke: var(--paper); stroke-width: 3px; paint-order: stroke; stroke-linejoin: round; }
+    .m-node text.sub { font-size: 9.5px; fill: var(--muted); }
+    @keyframes nodepop { from { transform: scale(.2); } to { transform: scale(1); } }
+    @keyframes ringout { from { transform: scale(.6); opacity: .45; } to { transform: scale(2.6); opacity: 0; } }
+    .m-marker .halo { fill: var(--red); opacity: .22; transform-box: fill-box; transform-origin: center; animation: halo 1.4s ease-in-out infinite; }
+    .m-marker .core { fill: var(--red); stroke: #fff; stroke-width: 2; }
+    @keyframes halo { 0%, 100% { transform: scale(.8); } 50% { transform: scale(1.5); } }
+    .m-plane path { fill: var(--ink); stroke: var(--paper); stroke-width: 1.4; paint-order: stroke; }
+    @media (prefers-reduced-motion: reduce) {
+      .m-node.show .dot, .m-node.show .ring, .m-marker .halo { animation: none; }
+    }
+
+    /* ---------- 小彩蛋 ---------- */
+    .hanko { cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    .hanko.stamp { animation: stamp .5s cubic-bezier(.2, .8, .3, 1); }
+    @keyframes stamp {
+      0%   { transform: rotate(-5deg) scale(2); opacity: .3; }
+      55%  { transform: rotate(-5deg) scale(.9); opacity: 1; }
+      100% { transform: rotate(-5deg) scale(1); }
+    }
+    .hero h1, .countdown { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    .countdown { cursor: pointer; user-select: none; }
+    .toast {
+      position: fixed; left: 50%; bottom: 22px; z-index: 70; max-width: 88vw; text-align: center;
+      padding: 10px 18px; border-radius: 3px; background: var(--ink); color: var(--paper);
+      font-size: .95rem; line-height: 1.5; pointer-events: none;
+      opacity: 0; transform: translate(-50%, 24px); transition: opacity .3s, transform .3s;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .fx-petal { position: fixed; z-index: 60; width: 10px; height: 12px; border-radius: 80% 0 80% 0; pointer-events: none; }
+    .fx-emoji { position: fixed; z-index: 60; pointer-events: none; line-height: 1; }
+    .fx-plane { position: fixed; left: 0; top: 30vh; z-index: 60; width: 56px; color: var(--red); pointer-events: none; display: flex; }
+    .fx-plane svg { display: block; width: 100%; height: auto; }
+    .fx-plane::before {
+      content: ""; position: absolute; right: 88%; top: 50%; height: 2px; width: 170px; transform: translateY(-50%);
+      background: linear-gradient(to left, currentColor, transparent);
+      -webkit-mask: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px 18px);
+      mask: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px 18px);
+    }
+    .ono {
+      position: fixed; z-index: 60; pointer-events: none; white-space: nowrap; font-weight: 800; font-size: 1.15rem; color: var(--red);
+      transform: translate(-50%, -50%);
+      text-shadow: 0 0 3px var(--paper), 0 0 3px var(--paper), 0 0 6px var(--paper);
+    }
+    .thumb { cursor: pointer; }
+    .thumb.wiggle svg, .thumb.wiggle img { animation: wiggle .55s ease; }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0); }
+      20% { transform: rotate(-9deg) scale(1.06); }
+      45% { transform: rotate(8deg) scale(1.06); }
+      70% { transform: rotate(-5deg); }
+    }
+    .egg-hint { margin-top: 6px; font-size: .8rem; }
+
     /* ---------- 捲動浮現 ---------- */
     @media (prefers-reduced-motion: no-preference) {
       .reveal {
@@ -373,6 +466,7 @@
     <div class="container">
       <a href="#flights">✈️ 航班</a>
       <a href="#hotel">🏨 住宿</a>
+      <a href="#route">🗺️ 動線</a>
       <span class="sep" aria-hidden="true"></span>
       <a href="#day1">一日目</a>
       <a href="#day2">二日目</a>
@@ -426,10 +520,25 @@
         <dt>🕑 入住與退房</dt>
         <dd>時間請以訂房確認信為準。</dd>
         <dt>🧳 寄放行李</dt>
-        <dd>1/9 抵達福岡是 11:00,可以先到飯店詢問能不能提早寄放行李，再去吃午餐。</dd>
+        <dd>1/9 抵達福岡是 11:00，可以先到飯店詢問能不能提早寄放行李，再去吃午餐。</dd>
         <dt>🌅 最後一天</dt>
         <dd>1/12 早上 7:30 吃早餐，8:30 要到博多車站，前一晚先把行李整理好。</dd>
       </dl>
+    </section>
+
+    <section class="block" id="route">
+      <div class="block-title"><h2>🗺️ 動線地圖</h2><span class="meta">動畫</span></div>
+      <p class="lead">選一天，看當天的移動路線一步一步畫出來。</p>
+      <div class="route-tabs" id="route-tabs" role="tablist" aria-label="選擇哪一天"></div>
+      <div class="route-card">
+        <svg class="route-svg" id="route-svg" role="img" aria-label="當天移動路線的示意圖"></svg>
+        <div class="route-bar">
+          <div class="route-caption" id="route-caption"></div>
+          <button type="button" class="textbtn" id="route-replay">↻ 重播</button>
+        </div>
+      </div>
+      <p class="route-note">示意圖，位置是大略的，距離和路線請以 Google 地圖為準。餐廳沒有標在地圖上，只列在下面的行程裡。</p>
+      <ol class="route-steps" id="route-steps"></ol>
     </section>
 
     <div id="days"></div>
@@ -483,8 +592,11 @@
     <div class="container">
       <p class="yoi">良い旅を 🌸</p>
       <p>點店名或景點名稱，可以直接開啟 Google 地圖</p>
+      <p class="egg-hint">🥚 這個網站藏了幾個小彩蛋，找找看</p>
     </div>
   </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
     // ============ 資料：要修改內容，改這裡就可以 ============
@@ -798,7 +910,7 @@
         var st = it.status === "have"
           ? '<span class="tag have">✅ 已在行程 ' + esc(it.when) + "</span>"
           : '<span class="tag alt">🔖 備選' + (it.when ? " " + esc(it.when) : "") + "</span>";
-        return '<article class="fcard"><div class="thumb">' + foodThumb(it) + "</div>" +
+        return '<article class="fcard" data-kind="' + esc(it.kind || "") + '"><div class="thumb">' + foodThumb(it) + "</div>" +
           '<div class="fbody"><div class="fname">' + link(it.name, it.q) + "</div>" +
           '<p class="fdesc">' + esc(it.d) + "</p>" + st + "</div></article>";
       }).join("");
@@ -864,10 +976,14 @@
       var pct = total ? Math.round(done / total * 100) : 0;
       document.getElementById("bar").style.width = pct + "%";
       document.getElementById("bar-wrap").setAttribute("aria-valuenow", pct);
-      document.getElementById("ptext").textContent = done === total && total > 0
+      var complete = done === total && total > 0;
+      document.getElementById("ptext").textContent = complete
         ? "🎉 全部準備好了，可以出發"
         : "🧳 已準備 " + done + " / " + total;
+      if (complete && !packWasComplete && packLive && window.__fx) window.__fx.celebrate();   // 彩蛋:剛好打勾完成的那一刻
+      packWasComplete = complete;
     }
+    var packWasComplete = false, packLive = false;
 
     document.querySelectorAll('#packing-list input[type="checkbox"]').forEach(function (b) {
       b.checked = !!checked[b.dataset.key];
@@ -884,17 +1000,27 @@
       updateProgress();
     });
     updateProgress();
+    packLive = true;
 
     // ============ 倒數計時(精準到秒，以台灣時間 2027/1/9 07:45 起飛為準) ============
     (function () {
       var el = document.getElementById("countdown");
       var start = new Date("2027-01-09T07:45:00+08:00").getTime();
       var end = new Date("2027-01-12T15:00:00+08:00").getTime();
+      var mode = 0;   // 彩蛋:點一下倒數,換不同的算法
       function pad(n) { return n < 10 ? "0" + n : String(n); }
+      function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+      function show(label, big, unit) {
+        el.innerHTML = '<span class="cd-label">' + label + '</span><span class="cd-num"><span><b>' + big + "</b>" + unit + "</span></span>";
+      }
       function tick() {
         var now = Date.now();
         if (now < start) {
           var s = Math.floor((start - now) / 1000);
+          if (mode === 1) { show("😴 再睡幾次覺就出發", Math.ceil(s / 86400), "次"); return; }
+          if (mode === 2) { show("⏱️ 距離出發還有", fmt(Math.floor(s / 3600)), "小時"); return; }
+          if (mode === 3) { show("🔢 距離出發還有", fmt(s), "秒"); return; }
+          if (mode === 4) { show("🎬 可以看完", fmt(Math.floor(s / 7200)), "部電影"); return; }
           var d = Math.floor(s / 86400);
           var h = Math.floor((s % 86400) / 3600);
           var m = Math.floor((s % 3600) / 60);
@@ -910,6 +1036,283 @@
       }
       var timer = setInterval(tick, 1000);
       tick();
+      el.addEventListener("click", function () { mode = (mode + 1) % 5; if (Date.now() < start) tick(); });
+    })();
+
+    // ============ 動線地圖 ============
+    (function () {
+      var NS = "http://www.w3.org/2000/svg";
+      var reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      var UNIT = 1.15;   // 每個步驟約 1.15 秒
+      var PLANE_D = "M60 12C58 10.6 52 10 44 10L30 1H26L32 10L12 10.6L8 6H5L6 11L2 11.6V12.4L6 13L5 18H8L12 13.4L32 14L26 23H30L44 14C52 14 58 13.4 60 12Z";
+
+      // 兩張底圖:A=市區(機場、博多、天神),B=含太宰府的大範圍。比例尺是依經緯度算的,位置為大略值。
+      var VIEWS = {
+        A: { lon: [130.386, 130.458], lat: [33.572, 33.606], km: 1 },
+        B: { lon: [130.372, 130.578], lat: [33.495, 33.612], km: 5 }
+      };
+      Object.keys(VIEWS).forEach(function (k) {
+        var v = VIEWS[k];
+        v.W = 400;
+        v.H = Math.round(400 * (v.lat[1] - v.lat[0]) / ((v.lon[1] - v.lon[0]) * Math.cos(33.55 * Math.PI / 180)));
+      });
+      var PLACE = {
+        airport: { name: "福岡機場", lat: 33.5859, lon: 130.4507 },
+        hakata:  { name: "博多車站", lat: 33.5902, lon: 130.4207 },
+        kushida: { name: "櫛田神社", lat: 33.5927, lon: 130.4106 },
+        tenjin:  { name: "天神", lat: 33.5915, lon: 130.3990 },
+        canal:   { name: "博多運河城", lat: 33.5893, lon: 130.4117 },
+        dazaifu: { name: "太宰府天滿宮", lat: 33.5216, lon: 130.5348 },
+        kamado:  { name: "竈門神社", lat: 33.5405, lon: 130.5600 }
+      };
+      // 文字位置 [dx, dy, anchor] 與第二行小字
+      var LABEL = {
+        A: { airport: [-10, 20, "end"], hakata: [0, 24, "middle"], kushida: [0, -12, "middle"], tenjin: [0, 24, "middle"] },
+        B: { tenjin: [-12, 4, "end"], canal: [8, 22, "start"], dazaifu: [-12, 22, "end"], kamado: [-12, 4, "end"] }
+      };
+      var SUB = { A: { hakata: "KOKO HOTEL", tenjin: "PARCO・Solaria" }, B: {} };
+
+      // 每一天:經過哪些點(visits),每個行程 v 指向 visits 的第幾個點
+      var DAYSMAP = [
+        { label: "一日目", view: "A", visits: ["airport", "hakata"], bends: [0.14], intro: true,
+          introText: "✈️ 星宇 JX842 正在降落福岡機場…",
+          events: [
+            { t: "11:00", text: "抵達福岡機場", v: 0 },
+            { t: "", text: "搭地下鐵到博多車站，約 5 分鐘", v: 1 },
+            { t: "13:00", text: "午餐：拉麵四家擇一", v: 1 },
+            { t: "14:30", text: "博多車站逛街（MIGNON）", v: 1 },
+            { t: "19:00", text: "晚餐：前田屋牛雜鍋", v: 1 }
+          ] },
+        { label: "二日目", view: "A", visits: ["hakata", "kushida", "tenjin"], bends: [0.2, -0.16],
+          events: [
+            { t: "10:00", text: "早餐：The Full Full Hakata", v: 0 },
+            { t: "10:30", text: "咖啡：Fuk Coffee", v: 0 },
+            { t: "11:30", text: "櫛田神社", v: 1 },
+            { t: "12:30", text: "午餐：四家擇一", v: 2 },
+            { t: "14:00", text: "福岡 PARCO / Mina 天神", v: 2 },
+            { t: "16:00", text: "索拉利亞廣場", v: 2 },
+            { t: "19:00", text: "晚餐：博多水炊鍋專門 橙", v: 2 }
+          ] },
+        { label: "三日目", view: "B", visits: ["tenjin", "dazaifu", "kamado", "canal"], bends: [0.16, -0.18, 0.3],
+          events: [
+            { t: "", text: "從天神搭西鐵前往太宰府，約 30 分鐘", v: 0 },
+            { t: "09:00", text: "太宰府天滿宮", v: 1 },
+            { t: "10:30", text: "表參道散步、吃梅枝餅", v: 1 },
+            { t: "12:00", text: "午餐：一蘭 太宰府參道店", v: 1 },
+            { t: "13:00", text: "寶滿宮竈門神社", v: 2 },
+            { t: "15:00", text: "博多運河城（可去可不去）", v: 3 },
+            { t: "18:00", text: "晚餐：肉屋肉一 博多店", v: 3 }
+          ] },
+        { label: "四日目", view: "A", visits: ["hakata", "airport"], bends: [-0.14], outro: true,
+          outroText: "✈️ 13:50 抵達桃園機場，15:00 回到溫暖的家",
+          outroLi: { t: "13:50", text: "抵達桃園機場，15:00 回到溫暖的家" },
+          events: [
+            { t: "07:30", text: "早餐：博多の海鮮料理 喜水丸", v: 0 },
+            { t: "08:30", text: "博多車站", v: 0 },
+            { t: "09:00", text: "福岡機場", v: 1 },
+            { t: "12:10", text: "星宇 JX843 起飛", v: 1 }
+          ] }
+      ];
+
+      var svg = document.getElementById("route-svg");
+      var capEl = document.getElementById("route-caption");
+      var stepsEl = document.getElementById("route-steps");
+      var S = null, cur = 0, raf = 0;
+
+      function el(name, attrs, parent) {
+        var e = document.createElementNS(NS, name);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        if (parent) parent.appendChild(e);
+        return e;
+      }
+      function proj(v, p) { return { x: (p.lon - v.lon[0]) / (v.lon[1] - v.lon[0]) * v.W, y: (v.lat[1] - p.lat) / (v.lat[1] - v.lat[0]) * v.H }; }
+      function f1(n) { return n.toFixed(1); }
+      function quad(P, Q, bend) {
+        var dx = Q.x - P.x, dy = Q.y - P.y, len = Math.sqrt(dx * dx + dy * dy) || 1;
+        var cx = (P.x + Q.x) / 2 + (-dy / len) * len * bend, cy = (P.y + Q.y) / 2 + (dx / len) * len * bend;
+        return "Q" + f1(cx) + " " + f1(cy) + " " + f1(Q.x) + " " + f1(Q.y);
+      }
+      function hiddenPath(d, parent) { return el("path", { d: d, fill: "none", stroke: "none", visibility: "hidden" }, parent); }
+      function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
+      function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+
+      function build(di) {
+        var day = DAYSMAP[di], v = VIEWS[day.view];
+        svg.setAttribute("viewBox", "0 0 " + v.W + " " + v.H);
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        // 底圖:陸地、北邊的海、山、比例尺
+        var defs = el("defs", {}, svg);
+        var pat = el("pattern", { id: "m-waves", width: 20, height: 10, patternUnits: "userSpaceOnUse" }, defs);
+        el("path", { d: "M0 10A10 10 0 0 1 20 10M-10 5A10 10 0 0 1 10 5M10 5A10 10 0 0 1 30 5", "class": "m-sea-wave" }, pat);
+        el("rect", { width: v.W, height: v.H, "class": "m-land" }, svg);
+        var seaH = 14;
+        el("rect", { width: v.W, height: seaH, "class": "m-sea" }, svg);
+        el("rect", { width: v.W, height: seaH, fill: "url(#m-waves)" }, svg);
+        el("text", { x: 8, y: seaH - 4, "class": "m-sea-label" }, svg).textContent = "博多灣";
+        if (day.view === "B") {
+          el("path", { d: "M322 124L342 96L356 112L374 88L396 122", "class": "m-mount" }, svg);
+          el("path", { d: "M150 262L168 240L180 252L198 228L222 262", "class": "m-mount" }, svg);
+          el("text", { x: 353, y: 84, "class": "m-mlabel", "text-anchor": "middle" }, svg).textContent = "寶滿山";
+        }
+        var kmPx = v.W / ((v.lon[1] - v.lon[0]) * 111.32 * Math.cos(33.55 * Math.PI / 180));
+        var sw = v.km * kmPx, sy = v.H - 12;
+        el("path", { d: "M12 " + (sy - 4) + "V" + sy + "H" + f1(12 + sw) + "V" + (sy - 4), "class": "m-scale" }, svg);
+        el("text", { x: f1(12 + sw / 2), y: sy - 6, "class": "m-scale-t", "text-anchor": "middle" }, svg).textContent = v.km + " km";
+        el("text", { x: v.W - 14, y: seaH + 16, "class": "m-scale-t", "text-anchor": "middle" }, svg).textContent = "↑北";
+
+        // 路線:每兩點之間一段弧線
+        var pts = day.visits.map(function (k) { return proj(v, PLACE[k]); });
+        var legs = [], full = "M" + f1(pts[0].x) + " " + f1(pts[0].y);
+        for (var i = 0; i < pts.length - 1; i++) {
+          var q = quad(pts[i], pts[i + 1], day.bends && day.bends[i] != null ? day.bends[i] : 0.15);
+          legs.push("M" + f1(pts[i].x) + " " + f1(pts[i].y) + q);
+          full += q;
+        }
+        var hold = el("g", { visibility: "hidden" }, svg), cum = [0], total = 0;
+        legs.forEach(function (d) { total += hiddenPath(d, hold).getTotalLength(); cum.push(total); });
+        svg.removeChild(hold);
+        el("path", { d: full, "class": "m-base" }, svg);
+        var prog = el("path", { d: full, "class": "m-path" }, svg);
+        prog.style.strokeDasharray = total + " " + total;
+        prog.style.strokeDashoffset = total;
+
+        // 停靠點
+        var nodes = day.visits.map(function (k, j) {
+          var pt = pts[j];
+          var g = el("g", { "class": "m-node", transform: "translate(" + f1(pt.x) + " " + f1(pt.y) + ")" }, svg);
+          el("circle", { r: 11, "class": "ring" }, g);
+          el("circle", { r: 6, "class": "dot" }, g);
+          var lab = (LABEL[day.view] || {})[k] || [0, 22, "middle"];
+          el("text", { x: lab[0], y: lab[1], "text-anchor": lab[2] }, g).textContent = PLACE[k].name;
+          var sub = (SUB[day.view] || {})[k];
+          if (sub) el("text", { x: lab[0], y: lab[1] + 12, "text-anchor": lab[2], "class": "sub" }, g).textContent = sub;
+          return g;
+        });
+
+        // 移動標記與飛機(開頭降落、結尾起飛)
+        var marker = el("g", { "class": "m-marker", visibility: "hidden" }, svg);
+        el("circle", { r: 9, "class": "halo" }, marker);
+        el("circle", { r: 5, "class": "core" }, marker);
+        var plane = el("g", { "class": "m-plane", visibility: "hidden" }, svg);
+        el("path", { d: PLANE_D, transform: "translate(-17 -6.4) scale(.53)" }, plane);
+
+        var intro = null, outro = null, introLen = 0, outroLen = 0;
+        if (day.intro) {
+          var A = pts[0];
+          intro = hiddenPath("M" + f1(A.x - 210) + " " + f1(v.H + 28) + "Q" + f1(A.x - 90) + " " + f1(A.y + 34) + " " + f1(A.x) + " " + f1(A.y), svg);
+          introLen = intro.getTotalLength();
+        }
+        if (day.outro) {
+          var B = pts[pts.length - 1];
+          outro = hiddenPath("M" + f1(B.x) + " " + f1(B.y) + "Q" + f1(B.x - 120) + " " + f1(B.y - 14) + " " + f1(B.x - 230) + " " + f1(v.H + 30), svg);
+          outroLen = outro.getTotalLength();
+        }
+
+        // 下方的行程清單
+        stepsEl.innerHTML = "";
+        var lis = day.events.map(function (e) {
+          var li = document.createElement("li");
+          li.innerHTML = '<span class="rt">' + esc(e.t) + "</span><span>" + esc(e.text) + "</span>";
+          stepsEl.appendChild(li);
+          return li;
+        });
+        if (day.outroLi) {
+          var lo = document.createElement("li");
+          lo.innerHTML = '<span class="rt">' + esc(day.outroLi.t) + "</span><span>" + esc(day.outroLi.text) + "</span>";
+          stepsEl.appendChild(lo);
+          lis.push(lo);
+        }
+
+        var n = day.events.length, pre = day.intro ? 1.1 : 0, post = day.outro ? 1.2 : 0, hold = day.outro ? 0.9 : 0;
+        S = { day: day, cum: cum, total: total, prog: prog, nodes: nodes, marker: marker, plane: plane,
+              intro: intro, introLen: introLen, outro: outro, outroLen: outroLen, lis: lis,
+              n: n, pre: pre, post: post, hold: hold, T: pre + (n - 1) + hold + post, cap: "" };
+      }
+
+      function placePlane(path, len, total) {
+        var a = path.getPointAtLength(clamp(len - 0.5, 0, total)), b = path.getPointAtLength(clamp(len + 0.5, 0, total));
+        var ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+        S.plane.setAttribute("transform", "translate(" + f1(a.x) + " " + f1(a.y) + ") rotate(" + f1(ang) + ")");
+        S.plane.setAttribute("visibility", "visible");
+      }
+
+      function render(tau) {
+        var day = S.day, n = S.n;
+        var te = clamp(tau - S.pre, 0, n - 1), k = Math.min(n - 1, Math.floor(te)), u = te - k, L;
+        if (k >= n - 1) L = S.cum[day.events[n - 1].v];
+        else {
+          var a = S.cum[day.events[k].v], b = S.cum[day.events[k + 1].v];
+          L = a + (b - a) * ease(clamp((u - 0.2) / 0.6, 0, 1));
+        }
+        var inIntro = S.pre > 0 && tau < S.pre, inOutro = S.post > 0 && tau > S.pre + n - 1 + S.hold;
+        var active = inOutro ? n : inIntro ? -1 : Math.min(n - 1, Math.floor(te + 0.2));
+
+        // 路線畫到目前位置
+        S.prog.style.strokeDashoffset = S.total - L;
+        S.prog.style.opacity = L > 0.5 ? 1 : 0;
+        // 停靠點:走到才彈出
+        S.nodes.forEach(function (g, j) {
+          var reached = j === 0 ? tau >= S.pre * 0.92 : L >= S.cum[j] - 0.5;
+          if (reached && !g.classList.contains("show")) g.classList.add("show");
+        });
+        // 標記
+        if (!inIntro && !inOutro) {
+          var pt = S.prog.getPointAtLength(L);
+          S.marker.setAttribute("transform", "translate(" + f1(pt.x) + " " + f1(pt.y) + ")");
+          S.marker.setAttribute("visibility", "visible");
+        } else S.marker.setAttribute("visibility", "hidden");
+        // 飛機
+        if (inIntro) { var q = clamp(tau / S.pre, 0, 1); placePlane(S.intro, (1 - Math.pow(1 - q, 2)) * S.introLen, S.introLen); }
+        else if (inOutro) { var r = clamp((tau - S.pre - (n - 1) - S.hold) / S.post, 0, 1); placePlane(S.outro, r * r * S.outroLen, S.outroLen); }
+        else S.plane.setAttribute("visibility", "hidden");
+        // 字幕與清單
+        var cap = inIntro ? day.introText : inOutro ? day.outroText
+          : (day.events[active].t ? "<b>" + esc(day.events[active].t) + "</b>" : "") + esc(day.events[active].text);
+        if (cap !== S.cap) { capEl.innerHTML = cap; S.cap = cap; }
+        S.lis.forEach(function (li, i) { li.className = i < active ? "done" : i === active ? "on" : ""; });
+      }
+
+      function play() {
+        cancelAnimationFrame(raf);
+        build(cur);
+        if (reduce) { render(S.T); return; }
+        render(0);
+        var t0 = 0;
+        function frame(ts) {
+          if (!t0) t0 = ts;
+          var tau = (ts - t0) / 1000 / UNIT;
+          if (tau >= S.T) { render(S.T); return; }
+          render(tau);
+          raf = requestAnimationFrame(frame);
+        }
+        raf = requestAnimationFrame(frame);
+      }
+
+      // 分頁:一日目~四日目
+      var tabs = document.getElementById("route-tabs");
+      DAYSMAP.forEach(function (d, i) {
+        var b = document.createElement("button");
+        b.type = "button"; b.textContent = d.label; b.setAttribute("role", "tab");
+        b.setAttribute("aria-selected", i === 0 ? "true" : "false");
+        b.addEventListener("click", function () {
+          cur = i;
+          Array.prototype.forEach.call(tabs.children, function (x, j) { x.setAttribute("aria-selected", j === i ? "true" : "false"); });
+          play();
+        });
+        tabs.appendChild(b);
+      });
+      document.getElementById("route-replay").addEventListener("click", play);
+
+      // 先畫好第一天的完整路線;展開並滑到畫面內時才開始播放動畫
+      build(0); render(S.T);
+      var sec = document.getElementById("route"), pending = false;
+      sec.addEventListener("blockopen", function () { pending = true; if (reduce || !("IntersectionObserver" in window)) { pending = false; play(); } });
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { if (e.isIntersecting && pending) { pending = false; play(); } });
+        }, { threshold: 0.4 }).observe(document.querySelector(".route-card"));
+      }
     })();
 
     // ============ 收合區塊 + 浮現動畫 ============
@@ -944,7 +1347,7 @@
       function setOpen(sec, open) {
         sec.classList.toggle("open", open);
         sec.querySelector(":scope > .block-title").setAttribute("aria-expanded", open ? "true" : "false");
-        if (open) play(sec);
+        if (open) { play(sec); sec.dispatchEvent(new CustomEvent("blockopen")); }
         syncAll();
       }
 
@@ -1084,6 +1487,136 @@
         p.appendChild(leaf);
         box.appendChild(p);
       }
+    })();
+
+    // ============ 小彩蛋 ============
+    (function () {
+      var reduce = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      function rnd(a, b) { return a + Math.random() * (b - a); }
+      var PLANE_SVG = '<svg viewBox="0 0 64 24" aria-hidden="true"><path fill="currentColor" d="M60 12C58 10.6 52 10 44 10L30 1H26L32 10L12 10.6L8 6H5L6 11L2 11.6V12.4L6 13L5 18H8L12 13.4L32 14L26 23H30L44 14C52 14 58 13.4 60 12Z"/></svg>';
+      var COLORS = ["#f2b2bd", "#f7c9d0", "#ffffff", "#e8949f"];
+
+      var toastEl = document.getElementById("toast"), toastTimer = 0;
+      function toast(msg, ms) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, ms || 2600);
+      }
+      function done(node) { return function () { node.remove(); }; }
+
+      // 花瓣從一點炸開
+      function burst(x, y, n) {
+        if (reduce) return;
+        for (var i = 0; i < n; i++) {
+          var p = document.createElement("span");
+          p.className = "fx-petal";
+          p.style.left = x + "px"; p.style.top = y + "px";
+          p.style.background = COLORS[i % COLORS.length];
+          document.body.appendChild(p);
+          var ang = rnd(-Math.PI * 0.95, -Math.PI * 0.05), sp = rnd(70, 190);
+          var dx = Math.cos(ang) * sp, dy = Math.sin(ang) * sp;
+          p.animate([
+            { transform: "translate(0,0) rotate(0deg) scale(.6)", opacity: 1 },
+            { transform: "translate(" + dx * 0.75 + "px," + dy + "px) rotate(200deg) scale(1)", opacity: 1, offset: 0.38 },
+            { transform: "translate(" + dx * 1.15 + "px," + (dy + rnd(240, 340)) + "px) rotate(460deg) scale(.9)", opacity: 0 }
+          ], { duration: rnd(1500, 2400), easing: "ease-out" }).onfinish = done(p);
+        }
+      }
+      // 從上方一路掉下來(表情符號或花瓣)
+      function rain(items, n) {
+        if (reduce) return;
+        for (var i = 0; i < n; i++) {
+          var s = document.createElement("span");
+          if (items) { s.className = "fx-emoji"; s.textContent = items[i % items.length]; s.style.fontSize = rnd(22, 36) + "px"; }
+          else { s.className = "fx-petal"; s.style.background = COLORS[i % COLORS.length]; }
+          s.style.left = rnd(0, window.innerWidth) + "px"; s.style.top = "-40px";
+          document.body.appendChild(s);
+          s.animate([
+            { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+            { transform: "translate(" + rnd(-90, 90) + "px," + (window.innerHeight + 60) + "px) rotate(" + rnd(180, 540) + "deg)", opacity: 1 }
+          ], { duration: rnd(2600, 4600), delay: rnd(0, 1800), easing: "ease-in", fill: "backwards" }).onfinish = done(s);
+        }
+      }
+      function planeAcross() {
+        if (reduce) return;
+        var d = document.createElement("div");
+        d.className = "fx-plane"; d.innerHTML = PLANE_SVG; d.style.top = rnd(18, 45) + "vh";
+        document.body.appendChild(d);
+        d.animate([
+          { transform: "translateX(-230px) rotate(-4deg)" },
+          { transform: "translateX(" + (window.innerWidth + 260) + "px) rotate(-4deg)" }
+        ], { duration: 2400, easing: "ease-in" }).onfinish = done(d);
+      }
+      function ono(text, x, y) {
+        var o = document.createElement("div");
+        o.className = "ono"; o.textContent = text; o.style.left = x + "px"; o.style.top = y + "px";
+        document.body.appendChild(o);
+        if (reduce) { setTimeout(function () { o.remove(); }, 1200); return; }
+        o.animate([
+          { transform: "translate(-50%,-50%) scale(.6)", opacity: 0 },
+          { transform: "translate(-50%,-90%) scale(1.15)", opacity: 1, offset: 0.25 },
+          { transform: "translate(-50%,-170%) scale(1)", opacity: 0 }
+        ], { duration: 1200, easing: "ease-out" }).onfinish = done(o);
+      }
+
+      // 彩蛋 1:點「旅」字印章
+      var GREET = [
+        "いってらっしゃい！路上小心",
+        "よか旅になるばい！會是一趟好旅行（博多腔）",
+        "お土産、忘れんでね！別忘了伴手禮",
+        "明太子、買うたと？明太子買了嗎（博多腔）",
+        "楽しんでね〜 玩得開心",
+        "ラーメン、何杯いける？你吃得下幾碗拉麵？"
+      ];
+      var hanko = document.querySelector(".hanko"), hc = 0;
+      hanko.addEventListener("click", function () {
+        hc++;
+        hanko.classList.remove("stamp"); void hanko.offsetWidth; hanko.classList.add("stamp");
+        var r = hanko.getBoundingClientRect();
+        if (hc % 10 === 0) { burst(r.left + r.width / 2, r.top + r.height / 2, 44); toast("押しすぎ〜！印章快沒墨水了 🤣", 3000); }
+        else { burst(r.left + r.width / 2, r.top + r.height / 2, 16); toast(GREET[hc % GREET.length], 2800); }
+      });
+
+      // 彩蛋 2:連點「福岡」大字 5 下,下拉麵雨
+      var title = document.querySelector(".hero h1"), taps = [];
+      title.addEventListener("click", function () {
+        var now = Date.now();
+        taps = taps.filter(function (t) { return now - t < 2500; });
+        taps.push(now);
+        if (taps.length >= 5) {
+          taps = [];
+          rain(["🍜", "🍥", "🥟", "🍲", "🍢", "🍓"], 26);
+          toast("お腹すいた〜！博多ラーメン食べに行こう 🍜", 3400);
+        }
+      });
+
+      // 彩蛋 3:美食卡片的插圖,點一下會發出擬聲詞
+      var ONO = { ramen: "ずるずる〜！", nabe: "ぐつぐつ…", meat: "じゅ〜っ！", bread: "ふわふわ♪", donut: "もちもち♪",
+                  coffee: "ほっ…☕", fish: "ぴちぴち！", mentai: "ぷちぷち♪", berry: "あま〜い♡" };
+      document.getElementById("food-list").addEventListener("click", function (e) {
+        var th = e.target.closest ? e.target.closest(".thumb") : null;
+        if (!th) return;
+        var card = th.closest(".fcard");
+        ono(ONO[card && card.getAttribute("data-kind")] || "ぱくっ！", e.clientX, e.clientY);
+        th.classList.remove("wiggle"); void th.offsetWidth; th.classList.add("wiggle");
+      });
+
+      // 彩蛋 4:行李清單全部打勾的那一刻
+      function celebrate() {
+        burst(window.innerWidth / 2, window.innerHeight * 0.62, 30);
+        planeAcross();
+        toast("🎉 準備完成！いってらっしゃい ✈️", 3400);
+      }
+      window.__fx = { celebrate: celebrate };
+
+      // 彩蛋 5:經典密技 ↑↑↓↓←→←→BA,下櫻吹雪
+      var KONAMI = ["arrowup", "arrowup", "arrowdown", "arrowdown", "arrowleft", "arrowright", "arrowleft", "arrowright", "b", "a"], pos = 0;
+      document.addEventListener("keydown", function (e) {
+        var k = (e.key || "").toLowerCase();
+        pos = k === KONAMI[pos] ? pos + 1 : (k === KONAMI[0] ? 1 : 0);
+        if (pos === KONAMI.length) { pos = 0; rain(null, 70); toast("🌸 桜吹雪！", 3000); }
+      });
     })();
   </script>
 </body>
