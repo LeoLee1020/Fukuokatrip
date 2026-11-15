@@ -266,9 +266,9 @@
       flex: none; width: 200px; scroll-snap-align: start; display: flex; flex-direction: column;
       background: var(--card); border: 1px solid var(--line); border-radius: 3px; overflow: hidden;
     }
-    .thumb { height: 92px; display: grid; place-content: center; background: rgba(127, 127, 127, .09); color: var(--blue); }
+    .thumb { position: relative; height: 112px; display: grid; place-content: center; background: rgba(127, 127, 127, .09); color: var(--blue); overflow: hidden; }
     .thumb svg { width: 108px; height: 72px; display: block; }
-    .thumb img { width: 200px; height: 92px; object-fit: cover; display: block; }
+    .thumb img.photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
     .fbody { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
     .fname { font-weight: 800; font-size: .98rem; line-height: 1.45; }
     .fname a { border-bottom: 1px solid var(--line); }
@@ -294,7 +294,7 @@
     .cloud.c3 { top: 72%; transform: scale(1.2); animation: drift 120s linear infinite; animation-delay: -35s; opacity: .7; }
     @keyframes drift { from { left: -140px; } to { left: 105%; } }
 
-    .plane { position: absolute; left: 0; display: flex; align-items: center; will-change: transform; }
+    .plane { position: absolute; top: 0; left: 0; display: flex; align-items: center; will-change: transform; visibility: hidden; }
     .plane svg { display: block; width: 100%; height: auto; }
     .plane::before {
       content: ""; position: absolute; right: 88%; top: 50%; height: 2px; width: 150px; transform: translateY(-50%);
@@ -302,20 +302,10 @@
       -webkit-mask: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px 18px);
       mask: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px 18px);
     }
-    .hero-plane { top: 17%; width: 46px; color: rgba(255, 255, 255, .85); animation: fly 22s ease-in-out infinite; animation-delay: 1.4s; }
-    @keyframes fly {
-      0%   { transform: translate3d(-24vw, 0, 0) rotate(-5deg); }
-      45%  { transform: translate3d(124vw, -46px, 0) rotate(-5deg); }
-      100% { transform: translate3d(124vw, -46px, 0) rotate(-5deg); }
-    }
-    @keyframes fly-bg {
-      0%   { transform: translate3d(-24vw, 0, 0) rotate(-3deg); }
-      38%  { transform: translate3d(124vw, -9vh, 0) rotate(-3deg); }
-      100% { transform: translate3d(124vw, -9vh, 0) rotate(-3deg); }
-    }
+    .hero-plane { width: 46px; color: rgba(255, 255, 255, .85); }
 
     .bg-fx { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-    .sky-plane { top: 24vh; width: 34px; color: var(--indigo); opacity: .16; animation: fly-bg 46s ease-in-out infinite; animation-delay: 5s; }
+    .sky-plane { width: 34px; color: var(--indigo); opacity: .16; }
     @media (prefers-color-scheme: dark) { .sky-plane { color: #cfd8ea; opacity: .14; } }
     .petal { position: absolute; top: 0; will-change: transform; animation: fall linear infinite; }
     .petal i { display: block; width: var(--s); height: calc(var(--s) * 1.2); background: #f2b2bd; opacity: .6; border-radius: 80% 0 80% 0; animation: sway ease-in-out infinite alternate; }
@@ -766,10 +756,41 @@
       mentai: '<path d="M20 40H100C100 62 82 72 60 72C38 72 20 62 20 40Z"/><path d="M28 40Q60 8 92 40"/><circle cx="46" cy="32" r="2"/><circle cx="60" cy="26" r="2"/><circle cx="74" cy="32" r="2"/><circle cx="54" cy="36" r="2"/><circle cx="68" cy="37" r="2"/>',
       berry: '<path d="M60 68C34 54 28 36 38 28C48 22 56 28 60 30C64 28 72 22 82 28C92 36 86 54 60 68Z"/><path d="M50 24L60 14L70 24"/><circle cx="52" cy="40" r="1.6"/><circle cx="68" cy="40" r="1.6"/><circle cx="60" cy="50" r="1.6"/>'
     };
+    // 店名對應的照片檔名:把照片以「檔名.jpg」放進 images 資料夾就會自動出現(對照表見 images/README.md)
+    var PHOTO = {
+      "一蘭拉麵 總本店": "ichiran-honten",
+      "一蘭 太宰府參道店": "ichiran-dazaifu",
+      "一蘭拉麵 天神西通店": "ichiran-tenjin",
+      "博多拉麵 ShinShin 天神本店": "shinshin",
+      "麵屋兼虎 天神本店": "kanetora",
+      "麵屋Gaga 天神店": "gaga",
+      "博多一双拉麵店(中洲店)": "ichisou",
+      "博多一幸舍": "ikkousha",
+      "博多牛腸鍋 樂天地 博多站前店": "rakutenchi",
+      "博多牛雜鍋前田屋 博多店": "maedaya",
+      "牛腸鍋 一藤": "ichifuji",
+      "博多水炊鍋專門 橙": "daidai",
+      "肉屋肉一 博多店": "nikuichi",
+      "烤肉店 石原牛": "ishiharagyu",
+      "元村炸牛排 福岡天神西通店": "motomura",
+      "Dacomecca": "dacomecca",
+      "MIGNON 博多店": "mignon",
+      "The Full Full Hakata": "fullfull",
+      "Bread, Espresso & Hakata": "bread-espresso",
+      "I'm donut? 福岡店": "im-donut",
+      "Pain Stock Tenjin": "pain-stock",
+      "Sabataro": "sabataro",
+      "Fuk Coffee": "fuk-coffee",
+      "博多の海鮮料理 喜水丸": "kisuimaru",
+      "元祖博多明太重": "mentaiju",
+      "伊都King 天神店": "itoking"
+    };
     function foodThumb(it) {
-      if (it.img) return '<img src="' + esc(it.img) + '" alt="' + esc(it.name) + '" loading="lazy">';
-      return '<svg viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      var svg = '<svg viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
         SUN + (ICONS[it.kind] || ICONS.ramen) + "</svg>";
+      var src = it.img || (PHOTO[it.name] ? "images/" + PHOTO[it.name] + ".jpg" : "");
+      if (!src) return svg;
+      return svg + '<img class="photo" src="' + esc(src) + '" alt="' + esc(it.name) + '" loading="lazy" decoding="async">';
     }
 
     document.getElementById("food-list").innerHTML = FOOD.map(function (grp, gi) {
@@ -787,6 +808,10 @@
         '<button type="button" data-row="' + gi + '" data-dir="1" aria-label="下一個">›</button></div></div>' +
         '<div class="food-row" id="food-row-' + gi + '" tabindex="0" role="group" aria-label="' + esc(grp.g) + '">' + cards + "</div></div>";
     }).join("");
+
+    document.getElementById("food-list").addEventListener("error", function (e) {
+      if (e.target && e.target.tagName === "IMG") e.target.remove();
+    }, true);
 
     document.getElementById("food-list").addEventListener("click", function (e) {
       var btn = e.target.closest("button[data-row]");
@@ -988,6 +1013,53 @@
         });
       }, { threshold: 0.1, rootMargin: "0px 0px -14% 0px" });
       titles.forEach(function (t) { io.observe(t); });
+    })();
+
+    // ============ 飛機:每次飛行都隨機(高度、方向、角度、大小、速度、間隔) ============
+    (function () {
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var hero = document.querySelector(".hero");
+      function rnd(a, b) { return a + Math.random() * (b - a); }
+
+      function launch(el, o) {
+        if (!el || !el.animate) return;
+        function fly() {
+          var W = o.width(), H = o.height();
+          var dir = Math.random() < 0.5 ? 1 : -1;                // 1 = 由左飛到右, -1 = 由右飛到左
+          var base = o.base * rnd(o.scale[0], o.scale[1]);
+          var y0 = rnd(o.y[0], o.y[1]) * H;
+          var dy = rnd(o.dy[0], o.dy[1]) * H;                      // 爬升或下降多少
+          // 起點與終點都在畫面外,連虛線尾跡也要完全飛出去才消失
+          var x0 = dir > 0 ? -(base + 10) : W + 10;
+          var x1 = dir > 0 ? W + 170 : -(base + 170);
+          var tilt = Math.atan2(dy, Math.abs(x1 - x0)) * 180 / Math.PI * 6;   // 放大角度,看起來才有爬升/下降感
+          tilt = Math.max(-14, Math.min(14, tilt));
+          var rot = dir > 0 ? tilt : -tilt;
+          function pos(x, y) { return "translate3d(" + x + "px," + y + "px,0) rotate(" + rot + "deg) scaleX(" + dir + ")"; }
+          el.style.width = base + "px";
+          el.style.visibility = "visible";
+          var anim = el.animate(
+            [{ transform: pos(x0, y0) }, { transform: pos(x1, y0 + dy) }],
+            { duration: rnd(o.dur[0], o.dur[1]), easing: "ease-in-out" }
+          );
+          anim.onfinish = function () {
+            el.style.visibility = "hidden";
+            setTimeout(fly, rnd(o.pause[0], o.pause[1]));
+          };
+        }
+        setTimeout(fly, o.first);
+      }
+
+      launch(document.querySelector(".hero-plane"), {
+        width: function () { return hero.clientWidth; }, height: function () { return hero.clientHeight; },
+        base: 46, scale: [0.75, 1.2], y: [0.06, 0.78], dy: [-0.16, 0.11],
+        dur: [7000, 12000], pause: [2500, 8000], first: 1200
+      });
+      launch(document.querySelector(".sky-plane"), {
+        width: function () { return window.innerWidth; }, height: function () { return window.innerHeight; },
+        base: 34, scale: [0.8, 1.35], y: [0.08, 0.88], dy: [-0.14, 0.1],
+        dur: [14000, 24000], pause: [6000, 20000], first: 3500
+      });
     })();
 
     // ============ 背景花瓣 ============
