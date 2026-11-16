@@ -130,6 +130,20 @@
     }
     .lead { color: var(--muted); font-size: .95rem; margin: 6px 0 14px; }
 
+    .daypick { margin: 28px 0 8px; }
+    .dp-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .dp-row a { display: block; text-align: center; padding: 9px 4px; border: 1px solid var(--line); border-radius: 4px; font-weight: 700; color: var(--blue); font-size: .95rem; line-height: 1.35; }
+    .dp-row a small { display: block; color: var(--muted); font-weight: 400; font-size: .76rem; }
+    .dp-row a:hover { border-color: var(--red); color: var(--red); }
+    @media (max-width: 420px) { .dp-row { grid-template-columns: repeat(2, 1fr); } }
+    .go { list-style: none; padding: 7px 0 7px 4.4rem; color: var(--muted); font-size: .86rem; line-height: 1.55; border-bottom: 1px dotted var(--line); }
+    .go b { color: var(--red); font-weight: 600; }
+    .go .go-t { color: var(--muted); }
+    .emg dl { grid-template-columns: 10rem 1fr; }
+    .emg dd a.tel { color: var(--red); font-weight: 800; font-size: 1.05rem; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+    .emg dd .sub { display: block; color: var(--muted); font-size: .86rem; margin-top: 2px; }
+    @media (max-width: 560px) { .emg dl { grid-template-columns: 1fr; } }
+
     /* ---------- 時間軸 ---------- */
     .timeline { list-style: none; }
     .item {
@@ -528,6 +542,7 @@
       <a href="#recs">🛍️ 推薦</a>
       <a href="#food">🍱 美食</a>
       <a href="#tips">💡 小提醒</a>
+      <a href="#emergency">🆘 緊急聯絡</a>
       <a href="#packing">🧳 行李清單</a>
     </div>
   </nav>
@@ -577,6 +592,16 @@
       </dl>
     </section>
 
+    <div class="daypick" id="daypick">
+      <p class="lead">選擇日期，查看當天的景點順序與移動路線。</p>
+      <div class="dp-row">
+        <a href="#day1">一日目<small>1/9 博多</small></a>
+        <a href="#day2">二日目<small>1/10 天神</small></a>
+        <a href="#day3">三日目<small>1/11 太宰府</small></a>
+        <a href="#day4">四日目<small>1/12 返程</small></a>
+      </div>
+    </div>
+
     <div id="days"></div>
 
     <section class="block" id="weather">
@@ -608,6 +633,23 @@
       <div class="block-title"><h2>💡 旅遊小提醒</h2></div>
       <p class="lead">出發前看一遍，現場會輕鬆很多。</p>
       <dl id="tips-list"></dl>
+    </section>
+
+    <section class="block tips emg" id="emergency">
+      <div class="block-title"><h2>🆘 緊急聯絡</h2><span class="meta">日本與台灣</span></div>
+      <p class="lead">點電話號碼可以直接撥號。出發前請先把這一頁截圖存起來。</p>
+      <dl>
+        <dt>🚓 警察</dt><dd><a class="tel" href="tel:110">110</a><span class="sub">遇到竊盜、遺失、車禍</span></dd>
+        <dt>🚑 救護車、火警</dt><dd><a class="tel" href="tel:119">119</a><span class="sub">急病、受傷、火災。接通後說「Kyukyu（救急）」或「Kaji（火事）」</span></dd>
+        <dt>🌊 海上事故</dt><dd><a class="tel" href="tel:118">118</a></dd>
+        <dt>📞 日本觀光廳 旅客熱線</dt><dd><a class="tel" href="tel:+815038162787">050-3816-2787</a><span class="sub">24 小時，有中文、英文、韓文。急病、災害、旅遊資訊都可以問。從台灣手機撥：+81-50-3816-2787</span></dd>
+        <dt>🇹🇼 駐福岡辦事處</dt><dd><a class="tel" href="tel:+81927342810">092-734-2810</a><span class="sub">台北駐大阪經濟文化辦事處福岡分處，福岡市中央區櫻坂 3-12-42。上班時間 09:00–12:00、13:00–18:00</span></dd>
+        <dt>🇹🇼 辦事處緊急電話</dt><dd><a class="tel" href="tel:+819019229740">090-1922-9740</a><span class="sub">只限重大急難，一般詢問請勿撥打。從台灣手機撥：+81-90-1922-9740</span></dd>
+        <dt>🇹🇼 外交部急難救助</dt><dd><a class="tel" href="tel:+886800085095">+886-800-085-095</a><span class="sub">在台灣境內直撥 0800-085-095。從日本撥打請加國碼 +886，並去掉開頭的 0</span></dd>
+        <dt>🏨 住宿</dt><dd>KOKO HOTEL 博多站前<span class="sub">電話請貼在訂房確認信，或自己補在這裡</span></dd>
+        <dt>✈️ 航空公司</dt><dd>星宇航空 STARLUX<span class="sub">班機異動或行李問題，聯絡方式看訂位確認信</span></dd>
+      </dl>
+      <p class="fnote">號碼與上班時間以<a href="https://www.boca.gov.tw/sp-foof-areacp-31-92761-1.html" target="_blank" rel="noopener">外交部領務局</a>、<a href="https://www.japan.travel/en/plan/hotline/" target="_blank" rel="noopener">日本政府觀光局</a>公告為準，出發前再確認一次。</p>
     </section>
 
     <section class="block" id="packing">
@@ -655,10 +697,10 @@
           { t: "約 05:15", name: "桃園機場第二航廈", type: "flight", ic: "🛫" },
           { t: "07:45", name: "起飛", type: "flight", note: "星宇航空 JX842", ic: "✈️" },
           { t: "11:00", name: "福岡機場", type: "flight", q: "福岡機場", loc: "airport", ic: "🛬" },
-          { t: "13:00", type: "meal", label: "午餐", names: ["ShinShin", "麵屋兼虎", "博多一雙", "博多一幸舍"],
+          { go: "🚌 國際線航廈搭免費接駁巴士 約 10 分 → 🚇 地下鐵空港線到博多 約 5 分（接駁時間以機場公告為準）", t: "13:00", type: "meal", label: "午餐", names: ["ShinShin", "麵屋兼虎", "博多一雙", "博多一幸舍"],
             loc: "hakata", ic: "🍜", how: "subway", mode: "🚇 地下鐵 約 5 分", path: ["airport", "hie", "hakata"] },
-          { t: "14:30", name: "博多車站逛街", note: "MIGNON 博多店", q: "MIGNON 博多店", loc: "hakata", ic: "🛍️" },
-          { t: "19:00", type: "meal", label: "晚餐", name: "博多牛雜鍋前田屋 博多店", q: "博多牛雜鍋前田屋 博多店", loc: "hakata", ic: "🍲" }
+          { go: "🚶 步行，同在博多站周邊 約 5–10 分", t: "14:30", name: "博多車站逛街", note: "MIGNON 博多店", q: "MIGNON 博多店", loc: "hakata", ic: "🛍️" },
+          { go: "🚶 步行，以 Google 地圖確認路線", t: "19:00", type: "meal", label: "晚餐", name: "博多牛雜鍋前田屋 博多店", q: "博多牛雜鍋前田屋 博多店", loc: "hakata", ic: "🍲" }
         ]
       },
       {
@@ -678,13 +720,13 @@
         ],
         items: [
           { t: "10:00", type: "meal", label: "早餐", name: "The Full Full Hakata", q: "The Full Full Hakata", loc: "hakata", ic: "🥐" },
-          { t: "10:30", name: "Fuk Coffee", note: "咖啡", q: "Fuk Coffee 福岡", loc: "hakata", ic: "☕" },
-          { t: "11:30", name: "櫛田神社", q: "櫛田神社", loc: "kushida", ic: "⛩️", how: "walk", mode: "🚶 步行", bend: 0.2, nolab: true },
-          { t: "12:30", type: "meal", label: "午餐", names: ["ShinShin", "元祖博多明太重", "一蘭拉麵 天神西通店", "麵屋gaga"],
+          { go: "🚶 步行 約 5–10 分", t: "10:30", name: "Fuk Coffee", note: "咖啡", q: "Fuk Coffee 福岡", loc: "hakata", ic: "☕" },
+          { go: "🚶 步行 約 15 分", t: "11:30", name: "櫛田神社", q: "櫛田神社", loc: "kushida", ic: "⛩️", how: "walk", mode: "🚶 步行", bend: 0.2, nolab: true },
+          { go: "🚶 走到中洲川端站 → 🚇 地下鐵空港線到天神 1 站 約 2–3 分，合計約 15 分", t: "12:30", type: "meal", label: "午餐", names: ["ShinShin", "元祖博多明太重", "一蘭拉麵 天神西通店", "麵屋gaga"],
             loc: "tenjin", ic: "🍜", how: "subway", mode: "🚇 地下鐵", path: ["kushida", "nakasu", "tenjin"] },
-          { t: "14:00", name: "福岡 PARCO / Mina 天神", q: "福岡PARCO", loc: "tenjin", ic: "🛍️" },
-          { t: "16:00", name: "索拉利亞廣場", q: "Solaria Plaza 福岡", loc: "tenjin", ic: "🏬" },
-          { t: "19:00", type: "meal", label: "晚餐", name: "博多水炊鍋專門 橙", q: "博多水炊鍋専門 橙", loc: "tenjin", ic: "🍲" }
+          { go: "🚶 步行 約 5–10 分（天神商圈內）", t: "14:00", name: "福岡 PARCO / Mina 天神", q: "福岡PARCO", loc: "tenjin", ic: "🛍️" },
+          { go: "🚶 步行 約 5 分", t: "16:00", name: "索拉利亞廣場", q: "Solaria Plaza 福岡", loc: "tenjin", ic: "🏬" },
+          { go: "🚶 步行，或搭計程車，以 Google 地圖確認", t: "19:00", type: "meal", label: "晚餐", name: "博多水炊鍋專門 橙", q: "博多水炊鍋専門 橙", loc: "tenjin", ic: "🍲" }
         ]
       },
       {
@@ -709,12 +751,12 @@
           { t: "stay", b: 5, s: "B", at: "canal", ic: "🥩", d: 0.9 }
         ],
         items: [
-          { t: "09:00", name: "太宰府天滿宮", q: "太宰府天滿宮", loc: "dazaifu", ic: "⛩️", how: "rail", mode: "🚃 西鐵 約 30 分", bend: 0.16 },
-          { t: "10:30", name: "表參道散步", note: "梅枝餅", q: "太宰府表參道", loc: "dazaifu", ic: "🍡" },
-          { t: "12:00", type: "meal", label: "午餐", name: "一蘭 太宰府參道店", q: "一蘭 太宰府參道店", loc: "dazaifu", ic: "🍜" },
-          { t: "13:00", name: "寶滿宮竈門神社", q: "寶滿宮竈門神社", loc: "kamado", ic: "⛩️", how: "bus", mode: "🚌 巴士或計程車", bend: -0.18, lab: [-62, -6] },
-          { t: "15:00", name: "博多運河城", optional: "天神可去可不去", q: "博多運河城", loc: "canal", ic: "🛍️", how: "rail", mode: "🚃 返回市區", bend: 0.3 },
-          { t: "18:00", type: "meal", label: "晚餐", name: "肉屋肉一 博多店", q: "肉屋肉一 博多店", loc: "canal", ic: "🥩" }
+          { go: "🚃 從天神站搭西鐵天神大牟田線，二日市站轉太宰府線 約 30 分", t: "09:00", name: "太宰府天滿宮", q: "太宰府天滿宮", loc: "dazaifu", ic: "⛩️", how: "rail", mode: "🚃 西鐵 約 30 分", bend: 0.16 },
+          { go: "🚶 步行 數分鐘（就在同一條參道）", t: "10:30", name: "表參道散步", note: "梅枝餅", q: "太宰府表參道", loc: "dazaifu", ic: "🍡" },
+          { go: "🚶 步行 數分鐘（參道上）", t: "12:00", type: "meal", label: "午餐", name: "一蘭 太宰府參道店", q: "一蘭 太宰府參道店", loc: "dazaifu", ic: "🍜" },
+          { go: "🚌 搭巴士或計程車 約 15–30 分（班次少，請出發前確認時刻）", t: "13:00", name: "寶滿宮竈門神社", q: "寶滿宮竈門神社", loc: "kamado", ic: "⛩️", how: "bus", mode: "🚌 巴士或計程車", bend: -0.18, lab: [-62, -6] },
+          { go: "🚌 回太宰府站 → 🚃 西鐵（二日市轉乘）回天神 → 🚇 地下鐵或步行，合計約 1 小時 15 分至 1.5 小時", t: "15:00", name: "博多運河城", optional: "天神可去可不去", q: "博多運河城", loc: "canal", ic: "🛍️", how: "rail", mode: "🚃 返回市區", bend: 0.3 },
+          { go: "🚶 步行，或搭地下鐵，以 Google 地圖確認", t: "18:00", type: "meal", label: "晚餐", name: "肉屋肉一 博多店", q: "肉屋肉一 博多店", loc: "canal", ic: "🥩" }
         ]
       },
       {
@@ -733,8 +775,8 @@
         ],
         items: [
           { t: "07:30", type: "meal", label: "早餐", name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸", loc: "hakata", ic: "🍣" },
-          { t: "08:30", name: "博多車站", q: "博多車站", loc: "hakata", ic: "🚉" },
-          { t: "09:00", name: "福岡機場", type: "flight", q: "福岡機場", loc: "airport", ic: "🧳", how: "subway", mode: "🚇 地下鐵 約 5 分", path: ["hakata", "hie", "airport"] },
+          { go: "🚶 步行，以 Google 地圖確認", t: "08:30", name: "博多車站", q: "博多車站", loc: "hakata", ic: "🚉" },
+          { go: "🚇 地下鐵空港線 約 5 分，再轉國際線航廈接駁巴士 約 10 分", t: "09:00", name: "福岡機場", type: "flight", q: "福岡機場", loc: "airport", ic: "🧳", how: "subway", mode: "🚇 地下鐵 約 5 分", path: ["hakata", "hie", "airport"] },
           { t: "12:10", name: "起飛", type: "flight", note: "星宇航空 JX843", ic: "🛫" },
           { t: "13:50", name: "桃園機場第二航廈", type: "flight", ic: "🛬" },
           { t: "15:00", name: "溫暖的家", ic: "🏠" }
@@ -798,7 +840,8 @@
         body = '<div class="name">' + tag + (it.q ? link(it.name, it.q) : esc(it.name)) + "</div>" +
           (it.note ? '<div class="note">' + esc(it.note) + "</div>" : "");
       }
-      return '<li class="item"><div class="time">' + it.t + "</div><div>" + body + "</div></li>";
+      return (it.go ? '<li class="go" aria-label="交通方式">' + esc(it.go) + "</li>" : "") +
+        '<li class="item"><div class="time">' + it.t + "</div><div>" + body + "</div></li>";
     }
 
     document.getElementById("days").innerHTML = DAYS.map(function (d, i) {
@@ -1669,7 +1712,7 @@
       });
 
       // 導覽列點到某一區:自動展開那一區
-      document.querySelectorAll('nav.top a[href^="#"]').forEach(function (a) {
+      document.querySelectorAll('nav.top a[href^="#"], .daypick a[href^="#"], #emergency-link').forEach(function (a) {
         a.addEventListener("click", function () {
           var sec = document.getElementById(a.getAttribute("href").slice(1));
           if (sec && sec.classList.contains("block") && !sec.classList.contains("open")) setOpen(sec, true);
