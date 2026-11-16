@@ -377,17 +377,17 @@
     .item.now .time { color: var(--red); }
 
     /* ---------- 地圖本體 ---------- */
-    :root { --sea: #d9e3ee; --land: #f6f4ee; }
-    @media (prefers-color-scheme: dark) { :root { --sea: #18232f; --land: #1c2027; } }
+    :root { --sea: #aadaff; --land: #f2efe9; --gline: #ffffff; --gpark: #c8e6c9; }
+    @media (prefers-color-scheme: dark) { :root { --sea: #17263c; --land: #242f3e; --gline: #38414e; --gpark: #263e3b; } }
     .m-sea { fill: var(--sea); }
     .m-land { fill: var(--land); }
     .m-coast, .m-bd { stroke: var(--muted); stroke-width: 1; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
     .m-coast { stroke-opacity: .55; }
     .m-bd { stroke-opacity: .5; stroke-dasharray: 3 3; }
-    .m-grid { stroke: var(--line); stroke-width: .6; opacity: .7; }
+    .m-grid { stroke: var(--gline); stroke-width: 1.6; opacity: 1; }
     .m-line { fill: none; stroke: var(--blue); opacity: .38; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
     .m-rail { stroke-dasharray: none; opacity: .5; }
-    .m-rw { stroke: var(--line); stroke-width: 7; stroke-linecap: butt; fill: none; }
+    .m-rw { stroke: var(--gline); stroke-width: 7; stroke-linecap: butt; fill: none; }
     .m-rw-c { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 5 6; fill: none; opacity: .7; }
     .m-road { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 1 4; stroke-linecap: round; opacity: .7; }
     .m-mount { fill: none; stroke: var(--muted); stroke-width: 1.4; opacity: .7; stroke-linecap: round; stroke-linejoin: round; }
