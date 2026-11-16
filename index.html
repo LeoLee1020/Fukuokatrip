@@ -326,6 +326,9 @@
     .food-extra dt { font-weight: 800; color: var(--blue); }
 
     /* ---------- 背景動畫:飛機、雲、花瓣 ---------- */
+    .expbtn { display: inline-block; margin-top: 14px; padding: 8px 16px; border: 1px solid rgba(255,255,255,.55); color: var(--hero-text); border-radius: 3px; font-weight: 600; font-size: .95rem; }
+    .expbtn:hover { background: rgba(255,255,255,.14); }
+    .navexp { color: var(--red); font-weight: 700; }
     .hero { position: relative; overflow: hidden; }
     .hero .container { position: relative; z-index: 1; }
     main, footer { position: relative; }
@@ -530,6 +533,7 @@
         </div>
       </div>
       <p class="countdown" id="countdown" aria-live="off"></p>
+      <a class="expbtn" href="expense.html">💴 旅費記帳</a>
     </div>
   </header>
 
@@ -549,6 +553,8 @@
       <a href="#tips">💡 小提醒</a>
       <a href="#emergency">🆘 緊急聯絡</a>
       <a href="#packing">🧳 行李清單</a>
+      <span class="sep" aria-hidden="true"></span>
+      <a href="expense.html" class="navexp">💴 記帳</a>
     </div>
   </nav>
 

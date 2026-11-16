@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e3354">
+  <title>旅費記帳｜福岡之旅 2027</title>
+  <meta name="description" content="福岡之旅的旅費記帳：用日圓記，自動換算台幣，資料只存在這支手機。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f4f2ec; --card: #fbfaf6; --ink: #25282d; --muted: #6c7078; --line: #d9d4c7;
+      --indigo: #1e3354; --blue: #1e3354; --red: #c4302b; --hero-text: #f4f2ec;
+      --c1: #c4302b; --c2: #1e3354; --c3: #b9892e; --c4: #4f7f6b; --c5: #7a5a8c; --c6: #3f7fa8; --c7: #8a8f98;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --paper: #14171c; --card: #1a1e24; --ink: #e8e5de; --muted: #9a9ea6; --line: #2f343c; --indigo: #16263f; --blue: #8fb0e8; --red: #e5605a;
+        --c1: #e5605a; --c2: #8fb0e8; --c3: #d4a94c; --c4: #72b39a; --c5: #b48fc7; --c6: #6fb0dc; --c7: #9a9ea6; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Shippori Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Noto Serif TC", "Songti TC", serif; background: var(--paper); color: var(--ink); line-height: 1.7; }
+    a { color: inherit; text-decoration: none; }
+    :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+    .container { max-width: 700px; margin: 0 auto; padding: 0 20px; }
+    header { background: var(--indigo); color: var(--hero-text); padding: 22px 0 24px; }
+    header .back { font-size: .92rem; opacity: .85; border-bottom: 1px solid rgba(255,255,255,.35); }
+    header h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: .12em; margin-top: 10px; }
+    header p { font-size: .9rem; opacity: .8; }
+    main { padding: 20px 0 60px; }
+    section { margin-top: 22px; }
+    h2 { font-size: 1.15rem; font-weight: 800; border-bottom: 2px solid var(--red); display: inline-block; padding-right: 10px; margin-bottom: 12px; }
+    .card { background: var(--card); border: 1px solid var(--line); padding: 14px 16px; }
+    .total { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 16px; }
+    .total .jpy { font-size: 2rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .total .twd { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .rate { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; font-size: .9rem; color: var(--muted); }
+    .rate input { width: 6rem; }
+    .bar { display: flex; height: 12px; margin-top: 14px; background: var(--line); overflow: hidden; }
+    .bar i { display: block; height: 100%; }
+    .legend { list-style: none; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: .9rem; }
+    .legend li { display: flex; align-items: center; gap: 6px; }
+    .legend .dot { width: 10px; height: 10px; flex: none; }
+    .legend .amt { margin-left: auto; font-variant-numeric: tabular-nums; }
+    form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    form .full { grid-column: 1 / -1; }
+    label { display: flex; flex-direction: column; gap: 3px; font-size: .84rem; color: var(--muted); }
+    input, select { font: inherit; font-size: 1rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); padding: 8px 10px; border-radius: 3px; width: 100%; min-width: 0; }
+    .cats { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cats label { flex-direction: row; align-items: center; color: var(--ink); font-size: .92rem; }
+    .cats input { position: absolute; opacity: 0; width: 0; }
+    .cats span { border: 1px solid var(--line); padding: 5px 10px; border-radius: 3px; background: var(--paper); cursor: pointer; }
+    .cats input:checked + span { border-color: var(--red); color: var(--red); font-weight: 800; }
+    .cats input:focus-visible + span { outline: 2px solid var(--red); outline-offset: 2px; }
+    button { font: inherit; cursor: pointer; }
+    .btn { background: var(--red); color: #fff; border: 0; padding: 11px 16px; border-radius: 3px; font-weight: 800; font-size: 1rem; }
+    .textbtn { background: none; border: 0; color: var(--blue); border-bottom: 1px solid var(--line); font-size: .9rem; padding: 0; }
+    .textbtn:hover { color: var(--red); border-bottom-color: var(--red); }
+    .tools { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; }
+    .day { margin-top: 14px; }
+    .day h3 { font-size: .95rem; color: var(--muted); font-weight: 600; display: flex; justify-content: space-between; }
+    .row { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; padding: 9px 0; border-bottom: 1px dotted var(--line); }
+    .row .what { font-weight: 600; }
+    .row .what small { display: block; color: var(--muted); font-weight: 400; font-size: .82rem; }
+    .row .p { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+    .row .p small { display: block; color: var(--muted); font-weight: 400; font-size: .78rem; }
+    .row .del { background: none; border: 0; color: var(--muted); font-size: 1.1rem; padding: 4px 8px; }
+    .row .del:hover { color: var(--red); }
+    .empty { color: var(--muted); text-align: center; padding: 22px 0; }
+    .note { color: var(--muted); font-size: .82rem; margin-top: 14px; }
+    .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 9px 14px; border-radius: 3px; font-size: .9rem; display: none; gap: 14px; align-items: center; z-index: 9; }
+    .toast.show { display: flex; }
+    .toast button { background: none; border: 0; color: inherit; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a class="back" href="./">← 回行程</a>
+      <h1>旅費記帳</h1>
+      <p>用日圓記，自動換算台幣。資料只存在這個瀏覽器裡。</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section aria-label="總覽">
+      <div class="card">
+        <div class="total">
+          <span class="jpy" id="t-jpy">¥0</span>
+          <span class="twd" id="t-twd">約 NT$0</span>
+        </div>
+        <div class="rate">
+          <label style="flex-direction:row;align-items:center;gap:8px;color:inherit;">匯率 1 日圓 =
+            <input id="rate" type="number" inputmode="decimal" step="0.0001" min="0" value="0.21" aria-label="1 日圓等於幾元台幣">
+            台幣</label>
+          <span>匯率請依出發前的實際牌價自己改。</span>
+        </div>
+        <div class="bar" id="bar" role="img" aria-label="各類別占比"></div>
+        <ul class="legend" id="legend"></ul>
+      </div>
+    </section>
+
+    <section aria-label="新增一筆">
+      <h2>記一筆</h2>
+      <form class="card" id="f" autocomplete="off">
+        <label>日期<input id="f-date" type="date" required></label>
+        <label>金額（日圓）<input id="f-amt" type="number" inputmode="numeric" min="1" step="1" required placeholder="例如 1200"></label>
+        <div class="full cats" id="f-cats" role="radiogroup" aria-label="類別"></div>
+        <label>付款方式
+          <select id="f-pay"><option>現金</option><option>信用卡</option><option>IC 卡（Suica 等）</option><option>行動支付</option></select>
+        </label>
+        <label>備註<input id="f-note" type="text" maxlength="40" placeholder="例如 一蘭拉麵"></label>
+        <button class="btn full" type="submit">加入</button>
+      </form>
+    </section>
+
+    <section aria-label="明細">
+      <h2>明細</h2>
+      <div id="list"></div>
+      <div class="tools">
+        <button class="textbtn" id="csv" type="button">匯出 CSV</button>
+        <button class="textbtn" id="clear" type="button">全部清空</button>
+      </div>
+      <p class="note">記錄存在你這支手機的瀏覽器，換手機或清除瀏覽資料就會消失。重要的帳請先匯出 CSV 備份。</p>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"><span id="toast-t"></span><button type="button" id="toast-u">復原</button></div>
+
+  <script>
+    (function () {
+      var CATS = [["餐飲", "🍜"], ["交通", "🚇"], ["購物", "🛍️"], ["伴手禮", "🎁"], ["門票", "⛩️"], ["住宿", "🏨"], ["其他", "📌"]];
+      var KEY = "fukuoka-expense-v1";
+      var $ = function (id) { return document.getElementById(id); };
+      var items = [], rate = 0.21, cat = 0, lastDel = null;
+
+      function load() {
+        try {
+          var raw = JSON.parse(localStorage.getItem(KEY) || "null");
+          if (raw) { items = Array.isArray(raw.items) ? raw.items : []; if (raw.rate > 0) rate = raw.rate; }
+        } catch (e) {}
+      }
+      function save() { try { localStorage.setItem(KEY, JSON.stringify({ items: items, rate: rate })); } catch (e) {} }
+      function yen(n) { return "¥" + Math.round(n).toLocaleString("en-US"); }
+      function twd(n) { return "NT$" + Math.round(n * rate).toLocaleString("en-US"); }
+      function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+      function today() { var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+
+      function render() {
+        var sum = items.reduce(function (a, b) { return a + b.amt; }, 0);
+        $("t-jpy").textContent = yen(sum);
+        $("t-twd").textContent = "約 " + twd(sum);
+        var by = CATS.map(function () { return 0; });
+        items.forEach(function (it) { by[it.cat] = (by[it.cat] || 0) + it.amt; });
+        $("bar").innerHTML = by.map(function (v, i) { return v ? '<i style="width:' + (v / sum * 100) + "%;background:var(--c" + (i + 1) + ')"></i>' : ""; }).join("");
+        $("legend").innerHTML = by.map(function (v, i) {
+          return v ? '<li><span class="dot" style="background:var(--c' + (i + 1) + ')"></span>' + CATS[i][1] + " " + CATS[i][0] + '<span class="amt">' + yen(v) + "</span></li>" : "";
+        }).join("");
+
+        if (!items.length) { $("list").innerHTML = '<p class="empty">還沒有記錄。花了第一筆錢就從上面記起。</p>'; return; }
+        var days = {};
+        items.forEach(function (it) { (days[it.date] = days[it.date] || []).push(it); });
+        $("list").innerHTML = Object.keys(days).sort().reverse().map(function (d) {
+          var list = days[d].slice().sort(function (a, b) { return b.id - a.id; });
+          var s = list.reduce(function (a, b) { return a + b.amt; }, 0);
+          return '<div class="day"><h3><span>' + d.replace(/-/g, "/") + "</span><span>" + yen(s) + "</span></h3>" + list.map(function (it) {
+            return '<div class="row"><div class="what">' + CATS[it.cat][1] + " " + CATS[it.cat][0] + "<small>" + esc(it.pay) + (it.note ? "・" + esc(it.note) : "") + '</small></div><div class="p">' + yen(it.amt) + "<small>" + twd(it.amt) + '</small></div><button class="del" type="button" data-id="' + it.id + '" aria-label="刪除這筆">✕</button></div>';
+          }).join("") + "</div>";
+        }).join("");
+      }
+
+      $("f-cats").innerHTML = CATS.map(function (c, i) {
+        return '<label><input type="radio" name="cat" value="' + i + '"' + (i === 0 ? " checked" : "") + "><span>" + c[1] + " " + c[0] + "</span></label>";
+      }).join("");
+      $("f-cats").addEventListener("change", function (e) { cat = +e.target.value; });
+      $("f-date").value = today();
+      load(); $("rate").value = rate; render();
+
+      $("rate").addEventListener("input", function () { var v = parseFloat(this.value); if (v > 0) { rate = v; save(); render(); } });
+      $("f").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var amt = Math.round(+$("f-amt").value);
+        if (!(amt > 0)) return;
+        items.push({ id: Date.now(), date: $("f-date").value || today(), amt: amt, cat: cat, pay: $("f-pay").value, note: $("f-note").value.trim() });
+        save(); render();
+        $("f-amt").value = ""; $("f-note").value = ""; $("f-amt").focus();
+      });
+      var tt;
+      function toast(t, undo) {
+        $("toast-t").textContent = t; $("toast-u").style.display = undo ? "" : "none";
+        $("toast").classList.add("show"); clearTimeout(tt); tt = setTimeout(function () { $("toast").classList.remove("show"); lastDel = null; }, 5000);
+      }
+      $("list").addEventListener("click", function (e) {
+        var b = e.target.closest(".del"); if (!b) return;
+        var id = +b.getAttribute("data-id");
+        var i = items.findIndex(function (x) { return x.id === id; });
+        if (i < 0) return;
+        lastDel = items.splice(i, 1)[0]; save(); render(); toast("已刪除一筆", true);
+      });
+      $("toast-u").addEventListener("click", function () { if (lastDel) { items.push(lastDel); lastDel = null; save(); render(); } $("toast").classList.remove("show"); });
+      $("clear").addEventListener("click", function () {
+        if (items.length && confirm("要清空所有記錄嗎？清空後無法復原。")) { items = []; save(); render(); }
+      });
+      $("csv").addEventListener("click", function () {
+        if (!items.length) { toast("目前沒有可匯出的記錄", false); return; }
+        var rows = [["日期", "類別", "金額(JPY)", "約合台幣", "付款方式", "備註"]].concat(items.slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id; }).map(function (it) {
+          return [it.date, CATS[it.cat][0], it.amt, Math.round(it.amt * rate), it.pay, it.note];
+        }));
+        var csv = "﻿" + rows.map(function (r) { return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n");
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+        a.download = "fukuoka-expense.csv"; document.body.appendChild(a); a.click(); a.remove();
+      });
+    })();
+  </script>
+</body>
+</html>
