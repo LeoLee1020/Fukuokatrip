@@ -67,6 +67,9 @@
     .row .p small { display: block; color: var(--muted); font-weight: 400; font-size: .78rem; }
     .row .del { background: none; border: 0; color: var(--muted); font-size: 1.1rem; padding: 4px 8px; }
     .row .del:hover { color: var(--red); }
+    .sync { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-top: 18px; font-size: .9rem; }
+    .sync[hidden] { display: none; }
+    .who { margin-top: 8px; font-size: .88rem; color: var(--muted); }
     .empty { color: var(--muted); text-align: center; padding: 22px 0; }
     .note { color: var(--muted); font-size: .82rem; margin-top: 14px; }
     .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 9px 14px; border-radius: 3px; font-size: .9rem; display: none; gap: 14px; align-items: center; z-index: 9; }
@@ -79,11 +82,16 @@
     <div class="container">
       <a class="back" href="./">← 回行程</a>
       <h1>旅費記帳</h1>
-      <p>用日圓記，自動換算台幣。資料只存在這個瀏覽器裡。</p>
+      <p>用日圓記，自動換算台幣。可以和同行的人一起記。</p>
     </div>
   </header>
 
   <main class="container">
+    <div class="sync card" id="sync" hidden>
+      <span>☁️ <span id="sync-text">多人同步中</span><span id="sync-state"></span></span>
+      <button class="textbtn" id="sync-link" type="button">複製邀請連結</button>
+    </div>
+
     <section aria-label="總覽">
       <div class="card">
         <div class="total">
@@ -98,6 +106,7 @@
         </div>
         <div class="bar" id="bar" role="img" aria-label="各類別占比"></div>
         <ul class="legend" id="legend"></ul>
+        <p class="who" id="who"></p>
       </div>
     </section>
 
@@ -107,10 +116,11 @@
         <label>日期<input id="f-date" type="date" required></label>
         <label>金額（日圓）<input id="f-amt" type="number" inputmode="numeric" min="1" step="1" required placeholder="例如 1200"></label>
         <div class="full cats" id="f-cats" role="radiogroup" aria-label="類別"></div>
+        <label>記帳人<input id="f-who" type="text" maxlength="10" placeholder="你的名字"></label>
         <label>付款方式
           <select id="f-pay"><option>現金</option><option>信用卡</option><option>IC 卡（Suica 等）</option><option>行動支付</option></select>
         </label>
-        <label>備註<input id="f-note" type="text" maxlength="40" placeholder="例如 一蘭拉麵"></label>
+        <label class="full">備註<input id="f-note" type="text" maxlength="40" placeholder="例如 一蘭拉麵"></label>
         <button class="btn full" type="submit">加入</button>
       </form>
     </section>
@@ -122,97 +132,162 @@
         <button class="textbtn" id="csv" type="button">匯出 CSV</button>
         <button class="textbtn" id="clear" type="button">全部清空</button>
       </div>
-      <p class="note">記錄存在你這支手機的瀏覽器，換手機或清除瀏覽資料就會消失。重要的帳請先匯出 CSV 備份。</p>
+      <p class="note">開啟多人同步後,記錄存在雲端,拿到邀請連結的人都能看到、新增和刪除。沒有開啟時,記錄只存在這支手機的瀏覽器。重要的帳請匯出 CSV 備份。</p>
     </section>
   </main>
 
   <div class="toast" id="toast" role="status"><span id="toast-t"></span><button type="button" id="toast-u">復原</button></div>
 
-  <script>
-    (function () {
-      var CATS = [["餐飲", "🍜"], ["交通", "🚇"], ["購物", "🛍️"], ["伴手禮", "🎁"], ["門票", "⛩️"], ["住宿", "🏨"], ["其他", "📌"]];
-      var KEY = "fukuoka-expense-v1";
-      var $ = function (id) { return document.getElementById(id); };
-      var items = [], rate = 0.21, cat = 0, lastDel = null;
+  <script src="firebase-config.js"></script>
+  <script type="module">
+    var CATS = [["餐飲", "🍜"], ["交通", "🚇"], ["購物", "🛍️"], ["伴手禮", "🎁"], ["門票", "⛩️"], ["住宿", "🏨"], ["其他", "📌"]];
+    var KEY = "fukuoka-expense-v1", NAMEKEY = "fukuoka-expense-name", CODEKEY = "fukuoka-expense-code";
+    var $ = function (id) { return document.getElementById(id); };
+    var items = [], rate = 0.21, cat = 0, lastDel = null, store;
 
-      function load() {
-        try {
-          var raw = JSON.parse(localStorage.getItem(KEY) || "null");
-          if (raw) { items = Array.isArray(raw.items) ? raw.items : []; if (raw.rate > 0) rate = raw.rate; }
-        } catch (e) {}
-      }
-      function save() { try { localStorage.setItem(KEY, JSON.stringify({ items: items, rate: rate })); } catch (e) {} }
-      function yen(n) { return "¥" + Math.round(n).toLocaleString("en-US"); }
-      function twd(n) { return "NT$" + Math.round(n * rate).toLocaleString("en-US"); }
-      function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-      function today() { var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+    function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+    function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+    function yen(n) { return "¥" + Math.round(n).toLocaleString("en-US"); }
+    function twd(n) { return "NT$" + Math.round(n * rate).toLocaleString("en-US"); }
+    function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+    function today() { var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+    function toast(t, undo) {
+      $("toast-t").textContent = t; $("toast-u").style.display = undo ? "" : "none";
+      $("toast").classList.add("show"); clearTimeout(toast.t);
+      toast.t = setTimeout(function () { $("toast").classList.remove("show"); lastDel = null; }, 5000);
+    }
 
-      function render() {
-        var sum = items.reduce(function (a, b) { return a + b.amt; }, 0);
-        $("t-jpy").textContent = yen(sum);
-        $("t-twd").textContent = "約 " + twd(sum);
-        var by = CATS.map(function () { return 0; });
-        items.forEach(function (it) { by[it.cat] = (by[it.cat] || 0) + it.amt; });
-        $("bar").innerHTML = by.map(function (v, i) { return v ? '<i style="width:' + (v / sum * 100) + "%;background:var(--c" + (i + 1) + ')"></i>' : ""; }).join("");
-        $("legend").innerHTML = by.map(function (v, i) {
-          return v ? '<li><span class="dot" style="background:var(--c' + (i + 1) + ')"></span>' + CATS[i][1] + " " + CATS[i][0] + '<span class="amt">' + yen(v) + "</span></li>" : "";
-        }).join("");
+    /* ---------- 資料層:本機 或 Firebase ---------- */
+    function localStore() {
+      try { var raw = JSON.parse(lsGet(KEY) || "null"); if (raw) { items = raw.items || []; if (raw.rate > 0) rate = raw.rate; } } catch (e) {}
+      function save() { lsSet(KEY, JSON.stringify({ items: items, rate: rate })); }
+      return {
+        mode: "local",
+        add: function (it) { items.push(it); save(); render(); },
+        del: function (id) { items = items.filter(function (x) { return x.id !== id; }); save(); render(); },
+        setRate: function (r) { rate = r; save(); render(); },
+        clear: function () { items = []; save(); render(); }
+      };
+    }
+    async function cloudStore(cfg, code) {
+      var V = "10.12.2", base = "https://www.gstatic.com/firebasejs/" + V + "/";
+      var appM = await import(base + "firebase-app.js");
+      var fs = await import(base + "firebase-firestore.js");
+      var app = appM.initializeApp(cfg);
+      var db;
+      try { db = fs.initializeFirestore(app, { localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }) }); }
+      catch (e) { db = fs.getFirestore(app); }
+      var col = fs.collection(db, "trips", code, "expenses");
+      var settings = fs.doc(db, "trips", code, "meta", "settings");
+      var st = {
+        mode: "cloud", online: true,
+        add: function (it) { return fs.setDoc(fs.doc(col, String(it.id)), it); },
+        del: function (id) { return fs.deleteDoc(fs.doc(col, String(id))); },
+        setRate: function (r) { rate = r; render(); return fs.setDoc(settings, { rate: r }, { merge: true }); },
+        clear: function () { return Promise.all(items.map(function (x) { return fs.deleteDoc(fs.doc(col, String(x.id))); })); }
+      };
+      fs.onSnapshot(col, function (snap) {
+        items = snap.docs.map(function (d) { return d.data(); });
+        setSync(snap.metadata.fromCache && snap.metadata.hasPendingWrites ? "待同步" : null);
+        render();
+      }, function (err) { console.error(err); setSync("連線失敗:請檢查 Firebase 規則與網路"); });
+      fs.onSnapshot(settings, function (d) {
+        var r = d.exists() ? d.data().rate : 0;
+        if (r > 0) { rate = r; $("rate").value = r; render(); }
+      });
+      return st;
+    }
 
-        if (!items.length) { $("list").innerHTML = '<p class="empty">還沒有記錄。花了第一筆錢就從上面記起。</p>'; return; }
-        var days = {};
-        items.forEach(function (it) { (days[it.date] = days[it.date] || []).push(it); });
-        $("list").innerHTML = Object.keys(days).sort().reverse().map(function (d) {
-          var list = days[d].slice().sort(function (a, b) { return b.id - a.id; });
-          var s = list.reduce(function (a, b) { return a + b.amt; }, 0);
-          return '<div class="day"><h3><span>' + d.replace(/-/g, "/") + "</span><span>" + yen(s) + "</span></h3>" + list.map(function (it) {
-            return '<div class="row"><div class="what">' + CATS[it.cat][1] + " " + CATS[it.cat][0] + "<small>" + esc(it.pay) + (it.note ? "・" + esc(it.note) : "") + '</small></div><div class="p">' + yen(it.amt) + "<small>" + twd(it.amt) + '</small></div><button class="del" type="button" data-id="' + it.id + '" aria-label="刪除這筆">✕</button></div>';
-          }).join("") + "</div>";
-        }).join("");
-      }
-
-      $("f-cats").innerHTML = CATS.map(function (c, i) {
-        return '<label><input type="radio" name="cat" value="' + i + '"' + (i === 0 ? " checked" : "") + "><span>" + c[1] + " " + c[0] + "</span></label>";
+    /* ---------- 畫面 ---------- */
+    function setSync(msg) {
+      var el = $("sync-state");
+      if (!el) return;
+      el.textContent = msg ? "(" + msg + ")" : "";
+    }
+    function render() {
+      var sum = items.reduce(function (a, b) { return a + b.amt; }, 0);
+      $("t-jpy").textContent = yen(sum);
+      $("t-twd").textContent = "約 " + twd(sum);
+      var by = CATS.map(function () { return 0; });
+      items.forEach(function (it) { by[it.cat] = (by[it.cat] || 0) + it.amt; });
+      $("bar").innerHTML = by.map(function (v, i) { return v ? '<i style="width:' + (v / sum * 100) + "%;background:var(--c" + (i + 1) + ')"></i>' : ""; }).join("");
+      $("legend").innerHTML = by.map(function (v, i) {
+        return v ? '<li><span class="dot" style="background:var(--c' + (i + 1) + ')"></span>' + CATS[i][1] + " " + CATS[i][0] + '<span class="amt">' + yen(v) + "</span></li>" : "";
       }).join("");
-      $("f-cats").addEventListener("change", function (e) { cat = +e.target.value; });
-      $("f-date").value = today();
-      load(); $("rate").value = rate; render();
+      var who = {};
+      items.forEach(function (it) { var w = it.who || "未署名"; who[w] = (who[w] || 0) + it.amt; });
+      var wk = Object.keys(who);
+      $("who").innerHTML = wk.length > 1 ? "誰付的:" + wk.map(function (w) { return esc(w) + " " + yen(who[w]); }).join("　") : "";
 
-      $("rate").addEventListener("input", function () { var v = parseFloat(this.value); if (v > 0) { rate = v; save(); render(); } });
-      $("f").addEventListener("submit", function (e) {
-        e.preventDefault();
-        var amt = Math.round(+$("f-amt").value);
-        if (!(amt > 0)) return;
-        items.push({ id: Date.now(), date: $("f-date").value || today(), amt: amt, cat: cat, pay: $("f-pay").value, note: $("f-note").value.trim() });
-        save(); render();
-        $("f-amt").value = ""; $("f-note").value = ""; $("f-amt").focus();
+      if (!items.length) { $("list").innerHTML = '<p class="empty">還沒有記錄。花了第一筆錢就從上面記起。</p>'; return; }
+      var days = {};
+      items.forEach(function (it) { (days[it.date] = days[it.date] || []).push(it); });
+      $("list").innerHTML = Object.keys(days).sort().reverse().map(function (d) {
+        var list = days[d].slice().sort(function (a, b) { return b.id - a.id; });
+        var s = list.reduce(function (a, b) { return a + b.amt; }, 0);
+        return '<div class="day"><h3><span>' + d.replace(/-/g, "/") + "</span><span>" + yen(s) + "</span></h3>" + list.map(function (it) {
+          return '<div class="row"><div class="what">' + CATS[it.cat][1] + " " + CATS[it.cat][0] + "<small>" + (it.who ? esc(it.who) + "・" : "") + esc(it.pay) + (it.note ? "・" + esc(it.note) : "") + '</small></div><div class="p">' + yen(it.amt) + "<small>" + twd(it.amt) + '</small></div><button class="del" type="button" data-id="' + it.id + '" aria-label="刪除這筆">✕</button></div>';
+        }).join("") + "</div>";
+      }).join("");
+    }
+
+    $("f-cats").innerHTML = CATS.map(function (c, i) {
+      return '<label><input type="radio" name="cat" value="' + i + '"' + (i === 0 ? " checked" : "") + "><span>" + c[1] + " " + c[0] + "</span></label>";
+    }).join("");
+    $("f-cats").addEventListener("change", function (e) { cat = +e.target.value; });
+    $("f-date").value = today();
+    $("f-who").value = lsGet(NAMEKEY) || "";
+    $("f-who").addEventListener("input", function () { lsSet(NAMEKEY, this.value.trim()); });
+
+    /* ---------- 啟動:決定本機或同步 ---------- */
+    var cfg = window.FIREBASE_CONFIG, m = /[#&]t=([A-Za-z0-9]{6,32})/.exec(location.hash), code = m ? m[1] : lsGet(CODEKEY);
+    if (cfg && cfg.projectId) {
+      if (!code) { var a = new Uint8Array(8); crypto.getRandomValues(a); code = Array.prototype.map.call(a, function (b) { return "abcdefghjkmnpqrstuvwxyz23456789"[b % 31]; }).join(""); }
+      lsSet(CODEKEY, code);
+      history.replaceState(null, "", "#t=" + code);
+      $("sync").hidden = false;
+      $("sync-text").textContent = "多人同步中";
+      $("sync-link").addEventListener("click", function () {
+        var url = location.origin + location.pathname + "#t=" + code;
+        (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { toast("已複製邀請連結,傳給同行的人", false); }, function () { prompt("複製這個連結傳給同行的人:", url); });
       });
-      var tt;
-      function toast(t, undo) {
-        $("toast-t").textContent = t; $("toast-u").style.display = undo ? "" : "none";
-        $("toast").classList.add("show"); clearTimeout(tt); tt = setTimeout(function () { $("toast").classList.remove("show"); lastDel = null; }, 5000);
-      }
-      $("list").addEventListener("click", function (e) {
-        var b = e.target.closest(".del"); if (!b) return;
-        var id = +b.getAttribute("data-id");
-        var i = items.findIndex(function (x) { return x.id === id; });
-        if (i < 0) return;
-        lastDel = items.splice(i, 1)[0]; save(); render(); toast("已刪除一筆", true);
-      });
-      $("toast-u").addEventListener("click", function () { if (lastDel) { items.push(lastDel); lastDel = null; save(); render(); } $("toast").classList.remove("show"); });
-      $("clear").addEventListener("click", function () {
-        if (items.length && confirm("要清空所有記錄嗎？清空後無法復原。")) { items = []; save(); render(); }
-      });
-      $("csv").addEventListener("click", function () {
-        if (!items.length) { toast("目前沒有可匯出的記錄", false); return; }
-        var rows = [["日期", "類別", "金額(JPY)", "約合台幣", "付款方式", "備註"]].concat(items.slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id; }).map(function (it) {
-          return [it.date, CATS[it.cat][0], it.amt, Math.round(it.amt * rate), it.pay, it.note];
-        }));
-        var csv = "﻿" + rows.map(function (r) { return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n");
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-        a.download = "fukuoka-expense.csv"; document.body.appendChild(a); a.click(); a.remove();
-      });
-    })();
+      try { store = await cloudStore(cfg, code); }
+      catch (e) { console.error(e); store = null; $("sync-text").textContent = "同步連不上,目前只存在這支手機"; }
+    }
+    if (!store) store = localStore();
+    if (store.mode === "local") { $("rate").value = rate; render(); }
+    else { $("rate").value = rate; render(); }
+
+    $("rate").addEventListener("input", function () { var v = parseFloat(this.value); if (v > 0) store.setRate(v); });
+    $("f").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var amt = Math.round(+$("f-amt").value);
+      if (!(amt > 0)) return;
+      store.add({ id: Date.now(), date: $("f-date").value || today(), amt: amt, cat: cat, pay: $("f-pay").value, note: $("f-note").value.trim(), who: $("f-who").value.trim() });
+      $("f-amt").value = ""; $("f-note").value = ""; $("f-amt").focus();
+    });
+    $("list").addEventListener("click", function (e) {
+      var b = e.target.closest(".del"); if (!b) return;
+      var id = +b.getAttribute("data-id");
+      var it = items.find(function (x) { return x.id === id; });
+      if (!it) return;
+      lastDel = it; store.del(id); toast("已刪除一筆", true);
+    });
+    $("toast-u").addEventListener("click", function () { if (lastDel) { store.add(lastDel); lastDel = null; } $("toast").classList.remove("show"); });
+    $("clear").addEventListener("click", function () {
+      var msg = store.mode === "cloud" ? "要清空所有人的記錄嗎?同行的人也會一起被清空,無法復原。" : "要清空所有記錄嗎?清空後無法復原。";
+      if (items.length && confirm(msg)) store.clear();
+    });
+    $("csv").addEventListener("click", function () {
+      if (!items.length) { toast("目前沒有可匯出的記錄", false); return; }
+      var rows = [["日期", "類別", "金額(JPY)", "約合台幣", "付款方式", "記帳人", "備註"]].concat(items.slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id; }).map(function (it) {
+        return [it.date, CATS[it.cat][0], it.amt, Math.round(it.amt * rate), it.pay, it.who || "", it.note];
+      }));
+      var csv = "﻿" + rows.map(function (r) { return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(","); }).join("\r\n");
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+      a.download = "fukuoka-expense.csv"; document.body.appendChild(a); a.click(); a.remove();
+    });
   </script>
 </body>
 </html>
