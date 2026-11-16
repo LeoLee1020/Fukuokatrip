@@ -268,6 +268,29 @@
     }
     .thumb { position: relative; height: 112px; display: grid; place-content: center; background: rgba(127, 127, 127, .09); color: var(--blue); overflow: hidden; }
     .thumb svg { width: 108px; height: 72px; display: block; }
+    .mama {
+      position: absolute; top: 7px; right: 7px; z-index: 2; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+      writing-mode: vertical-rl; font-size: 12.5px; font-weight: 800; line-height: 1.25; letter-spacing: .12em; text-align: start;
+      color: var(--red); background: rgba(244, 242, 236, .82); border: 2px solid var(--red); border-radius: 4px; padding: 5px 3px 3px;
+      transform: rotate(-7deg);
+    }
+    .mama::after { content: ""; position: absolute; inset: 2px; border: 1px solid var(--red); border-radius: 2px; opacity: .55; pointer-events: none; }
+    @media (prefers-color-scheme: dark) { .mama { background: rgba(20, 23, 28, .78); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .mama.pre { opacity: 0; transform: rotate(-7deg) scale(2.4); }
+      .mama.press { animation: mamapress .55s cubic-bezier(.2, .8, .3, 1) both; }
+      .mama.bump { animation: mamabump .45s cubic-bezier(.3, 1.6, .5, 1); }
+    }
+    @keyframes mamapress {
+      0%   { opacity: 0; transform: rotate(-7deg) scale(2.4); }
+      60%  { opacity: 1; transform: rotate(-7deg) scale(.88); }
+      100% { opacity: 1; transform: rotate(-7deg) scale(1); }
+    }
+    @keyframes mamabump {
+      0%   { transform: rotate(-7deg) scale(1); }
+      35%  { transform: rotate(-12deg) scale(.82); }
+      100% { transform: rotate(-7deg) scale(1); }
+    }
     .thumb img.photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
     .fbody { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
     .fname { font-weight: 800; font-size: .98rem; line-height: 1.45; }
@@ -511,7 +534,7 @@
         </div>
       </div>
 
-      <p class="fnote">去程預計 06:45 到桃園機場。航廈與報到櫃檯請以航空公司的通知為準。</p>
+      <p class="fnote">去程預計約 05:15 到桃園機場。航廈與報到櫃檯請以航空公司的通知為準。</p>
     </section>
 
     <section class="block tips" id="hotel">
@@ -579,7 +602,7 @@
 
   <footer>
     <div class="container">
-      <p class="yoi">良い旅を 🌸</p>
+      <p class="yoi">福岡で、素敵な旅を。🌸</p>
       <p>點店名或景點名稱，可以直接開啟 Google 地圖</p>
       <p class="egg-hint">🥚 這個網站藏了幾個小彩蛋，找找看</p>
     </div>
@@ -595,7 +618,7 @@
         id: "day1", no: "一日目", date: "2027/1/9 週六", title: "博多", view: "A",
         sub: "早班機抵達，午餐後逛博多車站，晚上吃牛雜鍋。",
         items: [
-          { t: "06:45", name: "桃園機場第二航廈", type: "flight", ic: "🛫" },
+          { t: "約 05:15", name: "桃園機場第二航廈", type: "flight", ic: "🛫" },
           { t: "07:45", name: "起飛", type: "flight", note: "星宇航空 JX842", ic: "✈️" },
           { t: "11:00", name: "福岡機場", type: "flight", q: "福岡機場", loc: "airport", ic: "🛬" },
           { t: "13:00", type: "meal", label: "午餐", names: ["ShinShin", "麵屋兼虎", "博多一雙", "博多一幸舍"],
@@ -810,10 +833,10 @@
     // kind: 小插圖種類。想換成真的照片,在該店加上 img: "images/檔名.jpg" 即可
     var FOOD = [
       { g: "🍜 拉麵", items: [
-        { name: "一蘭拉麵 總本店", q: "一蘭拉麵 總本店", kind: "ramen", status: "alt", d: "一蘭的總本店，在中洲。想吃發源地的話可以換進行程。" },
-        { name: "一蘭 太宰府參道店", q: "一蘭 太宰府參道店", kind: "ramen", status: "have", when: "三日目午餐", d: "在太宰府參道上，逛完天滿宮順路就能吃。" },
-        { name: "一蘭拉麵 天神西通店", q: "一蘭拉麵 天神西通店", kind: "ramen", status: "have", when: "二日目午餐擇一", d: "天神逛街時的午餐選項。" },
-        { name: "博多拉麵 ShinShin 天神本店", q: "博多拉麵 ShinShin 天神本店", kind: "ramen", status: "have", when: "一、二日目午餐擇一", d: "博多拉麵人氣店，這間是天神本店。" },
+        { name: "一蘭拉麵 總本店", mama: true, q: "一蘭拉麵 總本店", kind: "ramen", status: "alt", d: "一蘭的總本店，在中洲。想吃發源地的話可以換進行程。" },
+        { name: "一蘭 太宰府參道店", mama: true, q: "一蘭 太宰府參道店", kind: "ramen", status: "have", when: "三日目午餐", d: "在太宰府參道上，逛完天滿宮順路就能吃。" },
+        { name: "一蘭拉麵 天神西通店", mama: true, q: "一蘭拉麵 天神西通店", kind: "ramen", status: "have", when: "二日目午餐擇一", d: "天神逛街時的午餐選項。" },
+        { name: "博多拉麵 ShinShin 天神本店", mama: true, q: "博多拉麵 ShinShin 天神本店", kind: "ramen", status: "have", when: "一、二日目午餐擇一", d: "博多拉麵人氣店，這間是天神本店。" },
         { name: "麵屋兼虎 天神本店", q: "麵屋兼虎 天神本店", kind: "ramen", status: "have", when: "一日目午餐擇一", d: "豚骨拉麵名店，這間是天神本店。" },
         { name: "麵屋Gaga 天神店", q: "麵屋Gaga 天神店", kind: "ramen", status: "have", when: "二日目午餐擇一", d: "天神的拉麵店，午餐選項之一。" },
         { name: "博多一双拉麵店(中洲店)", q: "博多一双拉麵店 中洲店", kind: "ramen", status: "have", when: "一日目午餐擇一", d: "中洲店，博多豚骨拉麵。" },
@@ -821,18 +844,18 @@
       ] },
       { g: "🍲 鍋物", items: [
         { name: "博多牛腸鍋 樂天地 博多站前店", q: "博多牛腸鍋 樂天地 博多站前店", kind: "nabe", status: "alt", d: "福岡有名的牛腸鍋，在博多站前，離住宿近。" },
-        { name: "博多牛雜鍋前田屋 博多店", q: "博多牛雜鍋前田屋 博多店", kind: "nabe", status: "have", when: "一日目晚餐", d: "牛腸鍋名店，抵達福岡的第一頓晚餐。" },
-        { name: "牛腸鍋 一藤", q: "牛腸鍋 一藤", kind: "nabe", status: "alt", d: "牛腸鍋店，想換一家吃的時候可以選。" },
-        { name: "博多水炊鍋專門 橙", q: "博多水炊鍋専門 橙", kind: "nabe", status: "have", when: "二日目晚餐", d: "水炊是福岡的雞肉鍋，湯頭白濁濃郁，適合冬天。" }
+        { name: "博多牛雜鍋前田屋 博多店", mama: true, q: "博多牛雜鍋前田屋 博多店", kind: "nabe", status: "have", when: "一日目晚餐", d: "牛腸鍋名店，抵達福岡的第一頓晚餐。" },
+        { name: "牛腸鍋 一藤", mama: true, q: "牛腸鍋 一藤", kind: "nabe", status: "alt", d: "牛腸鍋店，想換一家吃的時候可以選。" },
+        { name: "博多水炊鍋專門 橙", mama: true, q: "博多水炊鍋専門 橙", kind: "nabe", status: "have", when: "二日目晚餐", d: "水炊是福岡的雞肉鍋，湯頭白濁濃郁，適合冬天。" }
       ] },
       { g: "🥩 燒肉與牛肉料理", items: [
         { name: "肉屋肉一 博多店", q: "肉屋肉一 博多店", kind: "meat", status: "have", when: "三日目晚餐", d: "肉料理店，太宰府一整天之後的晚餐。" },
-        { name: "烤肉店 石原牛", q: "石原牛 烤肉", kind: "meat", status: "alt", d: "燒肉店，想吃燒肉時的備選。" },
+        { name: "烤肉店 石原牛", mama: true, q: "石原牛 烤肉", kind: "meat", status: "alt", d: "燒肉店，想吃燒肉時的備選。" },
         { name: "元村炸牛排 福岡天神西通店", q: "元村炸牛排 福岡天神西通店", kind: "meat", status: "alt", when: "天神", d: "炸牛排專賣店，在天神西通，逛街時順路。" }
       ] },
       { g: "🥐 麵包、可頌與甜甜圈", items: [
-        { name: "Dacomecca", q: "Dacomecca", kind: "bread", status: "alt", d: "麵包店，想買點心或早餐時的備選。" },
-        { name: "MIGNON 博多店", q: "MIGNON 博多店", kind: "bread", status: "have", when: "一日目逛博多車站", d: "麵包店，一日目逛博多車站時順路買。" },
+        { name: "Dacomecca", mama: true, q: "Dacomecca", kind: "bread", status: "alt", d: "麵包店，想買點心或早餐時的備選。" },
+        { name: "MIGNON 博多店", mama: true, q: "MIGNON 博多店", kind: "bread", status: "have", when: "一日目逛博多車站", d: "麵包店，一日目逛博多車站時順路買。" },
         { name: "The Full Full Hakata", q: "The Full Full Hakata", kind: "bread", status: "have", when: "二日目早餐", d: "二日目的早餐，先吃飽再去逛天神。" },
         { name: "Bread, Espresso & Hakata", q: "Bread, Espresso & Hakata", kind: "bread", status: "alt", d: "麵包配咖啡，想吃輕食時的備選。" },
         { name: "I'm donut? 福岡店", q: "I'm donut? 福岡店", kind: "donut", status: "alt", d: "以生甜甜圈聞名，口感鬆軟。" },
@@ -840,7 +863,7 @@
       ] },
       { g: "☕ 咖啡與早餐", items: [
         { name: "Sabataro", q: "Sabataro 福岡", kind: "coffee", status: "alt", d: "咖啡與早餐，想換地方喝咖啡時的備選。" },
-        { name: "Fuk Coffee", q: "Fuk Coffee 福岡", kind: "coffee", status: "have", when: "二日目咖啡", d: "二日目上午的咖啡時間。" },
+        { name: "Fuk Coffee", mama: true, q: "Fuk Coffee 福岡", kind: "coffee", status: "have", when: "二日目咖啡", d: "二日目上午的咖啡時間。" },
         { name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸", kind: "fish", status: "have", when: "四日目早餐", d: "海鮮料理，回程前的早餐。" }
       ] },
       { g: "🍓 特色料理與甜點", items: [
@@ -891,6 +914,8 @@
       "元祖博多明太重": "mentaiju",
       "伊都King 天神店": "itoking"
     };
+    // 「母后大人指定」印章
+    var MAMA = '<span class="mama" role="button" tabindex="0" aria-label="母后大人指定，點一下有驚喜">母后大人<br>指定</span>';
     function foodThumb(it) {
       var svg = '<svg viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
         SUN + (ICONS[it.kind] || ICONS.ramen) + "</svg>";
@@ -904,7 +929,7 @@
         var st = it.status === "have"
           ? '<span class="tag have">✅ 已在行程 ' + esc(it.when) + "</span>"
           : '<span class="tag alt">🔖 備選' + (it.when ? " " + esc(it.when) : "") + "</span>";
-        return '<article class="fcard" data-kind="' + esc(it.kind || "") + '"><div class="thumb">' + foodThumb(it) + "</div>" +
+        return '<article class="fcard" data-kind="' + esc(it.kind || "") + '"><div class="thumb">' + foodThumb(it) + (it.mama ? MAMA : "") + "</div>" +
           '<div class="fbody"><div class="fname">' + link(it.name, it.q) + "</div>" +
           '<p class="fdesc">' + esc(it.d) + "</p>" + st + "</div></article>";
       }).join("");
@@ -914,6 +939,22 @@
         '<button type="button" data-row="' + gi + '" data-dir="1" aria-label="下一個">›</button></div></div>' +
         '<div class="food-row" id="food-row-' + gi + '" tabindex="0" role="group" aria-label="' + esc(grp.g) + '">' + cards + "</div></div>";
     }).join("");
+
+    // 印章:卡片滑進畫面時「啪」地蓋上去
+    (function () {
+      var stamps = document.querySelectorAll("#food-list .mama");
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce || !("IntersectionObserver" in window)) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          io.unobserve(en.target);
+          var m = en.target.querySelector(".mama");
+          m.classList.add("press"); m.classList.remove("pre");
+        });
+      }, { threshold: 0.6 });
+      stamps.forEach(function (m) { m.classList.add("pre"); io.observe(m.closest(".fcard")); });
+    })();
 
     document.getElementById("food-list").addEventListener("error", function (e) {
       if (e.target && e.target.tagName === "IMG") e.target.remove();
@@ -1095,7 +1136,7 @@
       function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
       function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
       function pad(n) { return (n < 10 ? "0" : "") + n; }
-      function toMin(t) { var m = /^(\d\d):(\d\d)$/.exec(t || ""); return m ? +m[1] * 60 + +m[2] : null; }
+      function toMin(t) { var m = /(\d\d):(\d\d)/.exec(t || ""); return m ? +m[1] * 60 + +m[2] : null; }
       function capOf(it) {
         var s;
         if (it.names) s = (it.label || "用餐") + "：" + it.names.length + " 家擇一";
@@ -1629,10 +1670,36 @@
                   coffee: "ほっ…☕", fish: "ぴちぴち！", mentai: "ぷちぷち♪", berry: "あま〜い♡" };
       document.getElementById("food-list").addEventListener("click", function (e) {
         var th = e.target.closest ? e.target.closest(".thumb") : null;
-        if (!th) return;
+        if (!th || e.target.closest(".mama")) return;
         var card = th.closest(".fcard");
         ono(ONO[card && card.getAttribute("data-kind")] || "ぱくっ！", e.clientX, e.clientY);
         th.classList.remove("wiggle"); void th.offsetWidth; th.classList.add("wiggle");
+      });
+
+      // 彩蛋 6:美食卡片上「母后大人指定」的印章
+      var MAMA_SAY = [
+        "👑 母后大人認證！這間絕對不會踩雷",
+        "母后大人曰：「吃就對了」🍴",
+        "御墨付き！母后大人蓋章保證 👑",
+        "母后大人正在看你有沒有吃飽 👀",
+        "吃完要跟母后大人報告心得喔 📝",
+        "母后大人說：多帶一點伴手禮回來 🎁"
+      ], mc = 0;
+      function mamaHit(m) {
+        mc++;
+        m.classList.remove("press", "pre", "bump"); void m.offsetWidth; m.classList.add("bump");
+        var r = m.getBoundingClientRect(), card = m.closest(".fcard"), nm = card ? card.querySelector(".fname").textContent : "";
+        burst(r.left + r.width / 2, r.top + r.height / 2, 14);
+        if (mc % 5 === 0) {
+          rain(["👑", "🌸", "👑", "💮"], 22);
+          toast("👑 母后大人駕到！「" + nm + "」準奏 🎉", 3400);
+        } else toast(MAMA_SAY[mc % MAMA_SAY.length], 2800);
+      }
+      var foodList = document.getElementById("food-list");
+      foodList.addEventListener("click", function (e) { var m = e.target.closest(".mama"); if (m) mamaHit(m); });
+      foodList.addEventListener("keydown", function (e) {
+        var m = e.target.closest && e.target.closest(".mama");
+        if (m && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); mamaHit(m); }
       });
 
       // 彩蛋 4:行李清單全部打勾的那一刻
