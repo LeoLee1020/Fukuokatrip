@@ -377,14 +377,19 @@
     .item.now .time { color: var(--red); }
 
     /* ---------- 地圖本體 ---------- */
-    :root { --sea: #aadaff; --land: #f2efe9; --gline: #ffffff; --gpark: #c8e6c9; }
-    @media (prefers-color-scheme: dark) { :root { --sea: #17263c; --land: #242f3e; --gline: #38414e; --gpark: #263e3b; } }
+    :root { --sea: #aadaff; --land: #f2efe9; --gline: #ffffff; --gpark: #c8e6c9; --gcase: #dadce0; --gparkl: #a8d5ab; }
+    @media (prefers-color-scheme: dark) { :root { --sea: #17263c; --land: #242f3e; --gline: #38414e; --gpark: #263e3b; --gcase: #212a37; --gparkl: #2f4a45; } }
     .m-sea { fill: var(--sea); }
     .m-land { fill: var(--land); }
     .m-coast, .m-bd { stroke: var(--muted); stroke-width: 1; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
     .m-coast { stroke-opacity: .55; }
     .m-bd { stroke-opacity: .5; stroke-dasharray: 3 3; }
-    .m-grid { stroke: var(--gline); stroke-width: 1.6; opacity: 1; }
+    .m-grid { stroke: var(--gline); stroke-width: 1.8; opacity: 1; }
+    .m-grid.main { stroke-width: 3.4; }
+    .m-grid-c { stroke: var(--gcase); stroke-width: 3.2; }
+    .m-grid-c.main { stroke-width: 5; }
+    .m-park { fill: var(--gpark); stroke: var(--gparkl); stroke-width: 1; }
+    .m-parkt { fill: #34773f; }
     .m-line { fill: none; stroke: var(--blue); opacity: .38; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
     .m-rail { stroke-dasharray: none; opacity: .5; }
     .m-rw { stroke: var(--gline); stroke-width: 7; stroke-linecap: butt; fill: none; }
@@ -1336,8 +1341,19 @@
           });
         } else {
           var step = key === "C" ? 0.5 : 1, x0 = W / 2 - (W / 2) % (step * kmpx);
-          for (var x = x0 - Math.ceil(W / kmpx / step) * step * kmpx; x < W; x += step * kmpx) el("line", { x1: f1(x), y1: 0, x2: f1(x), y2: H, "class": "m-grid" }, g);
-          for (var y = H / 2 - Math.ceil(H / kmpx / step) * step * kmpx; y < H; y += step * kmpx) el("line", { x1: 0, y1: f1(y), x2: W, y2: f1(y), "class": "m-grid" }, g);
+          // 仿 Google 地圖:道路有灰色外框,主要道路較粗(僅示意,不是真實道路)
+          var gl = [], gi = 0;
+          for (var x = x0 - Math.ceil(W / kmpx / step) * step * kmpx; x < W; x += step * kmpx, gi++) gl.push([x, 0, x, H, gi % 2 === 0]);
+          gi = 0;
+          for (var y = H / 2 - Math.ceil(H / kmpx / step) * step * kmpx; y < H; y += step * kmpx, gi++) gl.push([0, y, W, y, gi % 2 === 0]);
+          [" m-grid-c", ""].forEach(function (c) {
+            gl.forEach(function (l) { el("line", { x1: f1(l[0]), y1: f1(l[1]), x2: f1(l[2]), y2: f1(l[3]), "class": "m-grid" + c + (l[4] ? " main" : "") }, g); });
+          });
+          if (key === "C") {   // 天神中央公園(位置為示意)
+            var pa = pr("C", 33.5934, 130.4004), pb = pr("C", 33.5913, 130.4026);
+            el("rect", { x: f1(Math.min(pa.x, pb.x)), y: f1(Math.min(pa.y, pb.y)), width: f1(Math.abs(pb.x - pa.x)), height: f1(Math.abs(pb.y - pa.y)), rx: 4, "class": "m-park" }, g);
+            txt(g, (pa.x + pb.x) / 2, Math.min(pa.y, pb.y) - 4, "天神中央公園", "m-geo m-parkt", "middle");
+          }
         }
         // 地下鐵空港線(A、C)
         if (key === "A" || key === "C") {
