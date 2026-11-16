@@ -170,8 +170,17 @@
 
     /* ---------- 行李清單 ---------- */
     .progress { margin: 6px 0 4px; }
-    .bar { height: 3px; background: var(--line); }
-    .bar span { display: block; height: 100%; width: 0; background: var(--red); transition: width .25s ease; }
+    .bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+    .bar span { display: block; height: 100%; width: 0; background: var(--red); transition: width .35s ease; }
+    .pcount { font-size: 1rem; color: var(--ink); }
+    .pcount b { font-size: 1.5rem; font-weight: 800; color: var(--red); font-variant-numeric: tabular-nums; display: inline-block; }
+    .pcount .pct { color: var(--muted); font-size: .85rem; margin-left: .6em; }
+    .pcount.bump b { animation: pbump .4s cubic-bezier(.3, 1.6, .5, 1); }
+    @keyframes pbump { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+    .gcount { font-size: .82rem; font-weight: 600; color: var(--muted); margin-left: .6em; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+    .gcount.full { color: var(--red); }
+    .group input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(127, 127, 127, .6); }
+    @media (prefers-reduced-motion: reduce) { .pcount.bump b { animation: none; } .bar span { transition: none; } }
     .progress-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 8px; font-size: .9rem; color: var(--muted); }
     .textbtn {
       font: inherit; font-size: .88rem; color: var(--muted); background: none;
@@ -349,6 +358,22 @@
     .route-caption b { color: var(--blue); font-weight: 800; font-variant-numeric: tabular-nums; margin-right: .6em; }
     .route-caption .mv { color: var(--red); font-size: .85rem; margin-left: .4em; white-space: nowrap; }
     .route-note { color: var(--muted); font-size: .78rem; padding: 0 14px 9px; line-height: 1.6; }
+    .dayinfo { margin: 0 0 18px; }
+    .dayinfo section { padding: 12px 0 10px; border-top: 1px dotted var(--line); }
+    .dayinfo h4 { font-size: 1rem; font-weight: 800; color: var(--blue); letter-spacing: .06em; margin-bottom: 4px; }
+    .di-dl { display: grid; grid-template-columns: 3.6rem 1fr; gap: 2px 8px; font-size: .94rem; }
+    .di-dl dt { color: var(--muted); }
+    .di-dl dd { color: var(--ink); }
+    .di-dl .tot { margin-top: 4px; padding-top: 6px; border-top: 1px solid var(--line); font-weight: 800; color: var(--red); }
+    .di-moves, .di-notes { list-style: none; }
+    .di-moves li { padding: 7px 0; border-bottom: 1px dotted var(--line); font-size: .94rem; }
+    .di-moves li:last-child { border-bottom: 0; }
+    .mv-r { font-weight: 600; }
+    .mv-d { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; color: var(--muted); font-size: .88rem; }
+    .mv-d b { color: var(--red); font-weight: 600; }
+    .di-notes li { position: relative; padding: 3px 0 3px 1.1em; font-size: .93rem; line-height: 1.7; }
+    .di-notes li::before { content: ""; position: absolute; left: .1em; top: .95em; width: 5px; height: 5px; border-radius: 50%; background: var(--red); }
+    .di-fine { color: var(--muted); font-size: .78rem; margin-top: 6px; }
     .item { position: relative; }
     .item.now::before { content: ""; position: absolute; left: -11px; top: 8px; bottom: 8px; width: 3px; border-radius: 2px; background: var(--red); }
     .item.now .time { color: var(--red); }
@@ -587,7 +612,7 @@
     </section>
 
     <section class="block" id="packing">
-      <div class="block-title"><h2>🧳 行李清單</h2></div>
+      <div class="block-title"><h2>🧳 行李清單</h2><span class="meta" id="pk-meta"></span></div>
       <p class="lead">打勾會記在這支手機或電腦的瀏覽器裡。</p>
       <div class="progress">
         <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar-wrap"><span id="bar"></span></div>
@@ -617,6 +642,25 @@
       {
         id: "day1", no: "一日目", date: "2027/1/9 週六", title: "博多", view: "A",
         sub: "早班機抵達，午餐後逛博多車站，晚上吃牛雜鍋。",
+        info: {
+          times: [
+            ["出發", "約 05:15 抵達桃園機場，07:45 起飛（JX842）"],
+            ["抵達", "11:00 抵達福岡機場（當地時間），再搭地下鐵到博多車站"],
+            ["晚上", "19:00 吃晚餐，之後回住宿休息"]
+          ],
+          moves: [
+            ["國際線航廈 → 地下鐵站", "🚌 免費接駁巴士", "約 10 分（以機場公告為準）"],
+            ["福岡機場 → 博多車站", "🚇 地下鐵空港線", "約 5 分"]
+          ],
+          cost: [["交通", "約 ¥260（地下鐵）"], ["餐飲", "午餐 ¥1,000–1,500，晚餐 ¥2,500–3,500"]],
+          total: "約 ¥4,000–5,500",
+          notes: [
+            "入境前先在 Visit Japan Web 填好資料，並把 QR Code 截圖存起來。",
+            "KOKO HOTEL 的入住時間請向飯店確認，太早到可以先寄放行李。",
+            "前田屋的晚餐時段容易客滿，建議先預約。",
+            "十日恵比須期間（約 1/8 至 1/11）博多一帶人潮較多，行李多的話要避開人流。"
+          ]
+        },
         items: [
           { t: "約 05:15", name: "桃園機場第二航廈", type: "flight", ic: "🛫" },
           { t: "07:45", name: "起飛", type: "flight", note: "星宇航空 JX842", ic: "✈️" },
@@ -630,6 +674,25 @@
       {
         id: "day2", no: "二日目", date: "2027/1/10 週日", title: "天神", view: "C",
         sub: "咖啡、神社、逛街，晚上吃水炊鍋。",
+        info: {
+          times: [
+            ["出發", "10:00 吃早餐、喝咖啡，11:30 走去櫛田神社"],
+            ["抵達", "約 12:30 到天神吃午餐，逛街到 19:00 晚餐"]
+          ],
+          moves: [
+            ["博多車站 → 櫛田神社", "🚶 步行", "約 15 分"],
+            ["櫛田神社 → 天神", "🚇 地下鐵（中洲川端站 → 天神站）", "約 10 至 15 分（含走到車站）"],
+            ["福岡 PARCO → 索拉利亞廣場", "🚶 步行", "約 5 分"]
+          ],
+          cost: [["交通", "約 ¥210–260（地下鐵）"], ["餐飲", "早餐與咖啡 ¥1,500–2,000，午餐 ¥1,000–1,500，晚餐 ¥3,500–5,000"]],
+          total: "約 ¥6,000–9,000",
+          notes: [
+            "1/10 是十日恵比須的正日，博多一帶人潮多，也有攤販，走路要留時間。",
+            "橙的晚餐建議先預約。",
+            "天神午餐有四家可選，排隊太久就換下一家。",
+            "天神逛街的步行距離不短，穿好走的鞋。"
+          ]
+        },
         items: [
           { t: "10:00", type: "meal", label: "早餐", name: "The Full Full Hakata", q: "The Full Full Hakata", loc: "hakata", ic: "🥐" },
           { t: "10:30", name: "Fuk Coffee", note: "咖啡", q: "Fuk Coffee 福岡", loc: "hakata", ic: "☕" },
@@ -644,6 +707,26 @@
       {
         id: "day3", no: "三日目", date: "2027/1/11 週一", title: "太宰府", view: "B", start: "tenjin",
         sub: "參拜太宰府天滿宮，逛參道、吃梅枝餅，晚上吃肉。",
+        info: {
+          times: [
+            ["出發", "約 08:00 從西鐵天神站出發（建議時間，預留買票與等車）"],
+            ["抵達", "09:00 太宰府天滿宮，13:00 竈門神社，15:00 回到市區的運河城"]
+          ],
+          moves: [
+            ["天神 → 太宰府", "🚃 西鐵，通常在二日市站轉乘", "約 30 分"],
+            ["太宰府天滿宮 → 竈門神社", "🚌 巴士或計程車", "約 10 至 20 分（依班次與路況）"],
+            ["竈門神社 → 博多運河城", "🚃 返回市區，需要轉乘", "約 1 小時以上"]
+          ],
+          cost: [["交通", "西鐵往返約 ¥840，竈門神社的巴士或計程車約 ¥300–2,000"], ["餐飲", "午餐 ¥1,000–1,500，梅枝餅 ¥130 起，晚餐 ¥3,000–5,000"]],
+          total: "約 ¥5,500–9,500",
+          notes: [
+            "1/11 是成人之日連假，太宰府會很擠，早上 9 點到可以避開一部分人潮。",
+            "天滿宮與竈門神社的參拜本身不收門票，參道上的小店和攤販多半收現金。",
+            "石階和參道走很多，穿好走的鞋，也帶暖暖包。",
+            "回程要轉乘，搭車前用地圖 App 查即時班次。",
+            "運河城可去可不去，累了就直接回住宿休息。肉一的晚餐建議先預約。"
+          ]
+        },
         items: [
           { t: "09:00", name: "太宰府天滿宮", q: "太宰府天滿宮", loc: "dazaifu", ic: "⛩️", how: "rail", mode: "🚃 西鐵 約 30 分", bend: 0.16 },
           { t: "10:30", name: "表參道散步", note: "梅枝餅", q: "太宰府表參道", loc: "dazaifu", ic: "🍡" },
@@ -656,6 +739,24 @@
       {
         id: "day4", no: "四日目", date: "2027/1/12 週二", title: "返程", view: "A",
         sub: "吃完海鮮早餐，搭機回家。",
+        info: {
+          times: [
+            ["出發", "08:30 從博多車站搭地下鐵前往機場"],
+            ["抵達", "09:00 抵達福岡機場，12:10 起飛，13:50 抵達桃園機場（台灣時間），15:00 到家"]
+          ],
+          moves: [
+            ["博多車站 → 福岡機場", "🚇 地下鐵空港線", "約 5 分"],
+            ["地下鐵站 → 國際線航廈", "🚌 免費接駁巴士", "約 10 分（以機場公告為準）"]
+          ],
+          cost: [["交通", "約 ¥260（地下鐵）"], ["餐飲", "早餐 ¥1,500–2,500"]],
+          total: "約 ¥1,800–3,000",
+          notes: [
+            "國際線航廈和地下鐵站不在同一棟，要預留接駁與報到的時間。",
+            "液體類的伴手禮（酒、醬料）要放進託運行李。",
+            "要退稅的商品，先確認怎麼辦理，再決定放哪個行李。",
+            "日幣零錢可以在機場用掉。回程時間是當地時間，台灣比福岡慢 1 小時。"
+          ]
+        },
         items: [
           { t: "07:30", type: "meal", label: "早餐", name: "博多の海鮮料理 喜水丸", q: "博多の海鮮料理 喜水丸", loc: "hakata", ic: "🍣" },
           { t: "08:30", name: "博多車站", q: "博多車站", loc: "hakata", ic: "🚉" },
@@ -726,6 +827,22 @@
       return '<li class="item"><div class="time">' + it.t + "</div><div>" + body + "</div></li>";
     }
 
+    function dayInfo(f) {
+      if (!f) return "";
+      var times = f.times.map(function (r) { return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("");
+      var moves = f.moves.map(function (m) {
+        return '<li><div class="mv-r">' + esc(m[0]) + '</div><div class="mv-d"><span>' + esc(m[1]) + "</span><b>" + esc(m[2]) + "</b></div></li>";
+      }).join("");
+      var cost = f.cost.map(function (r) { return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>"; }).join("") +
+        '<dt class="tot">合計</dt><dd class="tot">' + esc(f.total) + " / 人</dd>";
+      var notes = f.notes.map(function (n) { return "<li>" + esc(n) + "</li>"; }).join("");
+      return '<div class="dayinfo">' +
+        '<section><h4>🕐 出發與抵達</h4><dl class="di-dl">' + times + "</dl></section>" +
+        '<section><h4>🚃 交通方式與時間</h4><ul class="di-moves">' + moves + "</ul></section>" +
+        '<section><h4>💴 預計花費</h4><dl class="di-dl">' + cost + '</dl><p class="di-fine">粗估的一般價位，不含購物，實際請以店家與現場為準。</p></section>' +
+        '<section><h4>⚠️ 注意事項</h4><ul class="di-notes">' + notes + "</ul></section></div>";
+    }
+
     document.getElementById("days").innerHTML = DAYS.map(function (d, i) {
       return '<section class="block" id="' + d.id + '">' +
         '<div class="block-title"><span class="day-no">' + esc(d.no) + "</span><h2>" + esc(d.title) + "</h2><time>" + esc(d.date) + "</time></div>" +
@@ -733,6 +850,7 @@
         '<div class="daymap" data-i="' + i + '"><svg class="route-svg" role="img" aria-label="' + esc(d.no) + '的移動路線示意圖"></svg>' +
         '<div class="route-bar"><div class="route-caption"></div><button type="button" class="textbtn replay">↻ 重播</button></div>' +
         '<p class="route-note">示意圖，位置是大略的，路線請以 Google 地圖為準。</p></div>' +
+        dayInfo(d.info) +
         '<ol class="timeline">' + d.items.map(renderItem).join("") + "</ol></section>";
     }).join("");
 
@@ -999,11 +1117,12 @@
         var id = "p-" + gi + "-" + ii;
         return '<li><label><input type="checkbox" id="' + id + '" data-key="' + id + '"><span>' + esc(name) + "</span></label></li>";
       }).join("");
-      return '<div class="group"><h3>' + esc(grp.g) + "</h3>" +
+      return '<div class="group"><h3>' + esc(grp.g) + ' <span class="gcount" data-g="' + gi + '"></span></h3>' +
         (grp.note ? '<p class="gnote">' + esc(grp.note) + "</p>" : "") +
         "<ul>" + lis + "</ul></div>";
     }).join("");
 
+    var lastDone = -1;
     function updateProgress() {
       var boxes = document.querySelectorAll('#packing-list input[type="checkbox"]');
       var done = 0;
@@ -1012,9 +1131,20 @@
       document.getElementById("bar").style.width = pct + "%";
       document.getElementById("bar-wrap").setAttribute("aria-valuenow", pct);
       var complete = done === total && total > 0;
-      document.getElementById("ptext").textContent = complete
-        ? "🎉 全部準備好了，可以出發"
-        : "🧳 已準備 " + done + " / " + total;
+      var pt = document.getElementById("ptext");
+      pt.innerHTML = complete
+        ? '<span class="pcount">🎉 已完成 <b>' + done + "</b>/" + total + ' 項，可以出發</span>'
+        : '<span class="pcount">🧳 已完成 <b>' + done + "</b>/" + total + ' 項<span class="pct">' + pct + "%</span></span>";
+      if (lastDone >= 0 && done !== lastDone) { var pc = pt.firstChild; pc.classList.add("bump"); }
+      lastDone = done;
+      document.getElementById("pk-meta").textContent = done + "/" + total + (complete ? " ✅" : "");
+      document.querySelectorAll("#packing-list .group").forEach(function (g, gi) {
+        var all = g.querySelectorAll('input[type="checkbox"]'), n = 0;
+        all.forEach(function (x) { if (x.checked) n++; });
+        var gc = g.querySelector(".gcount");
+        gc.textContent = n + "/" + all.length;
+        gc.classList.toggle("full", n === all.length);
+      });
       if (complete && !packWasComplete && packLive && window.__fx) window.__fx.celebrate();   // 彩蛋:剛好打勾完成的那一刻
       packWasComplete = complete;
     }
@@ -1395,7 +1525,7 @@
     (function () {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       // 區塊內會「跳出來」的內容(標題列另外處理)
-      var BODY_SEL = ".lead, .daymap, .item, .flt, .fnote, .hotel-name, .wx-now, .wx-cell, .wx-note, .rec, " +
+      var BODY_SEL = ".lead, .daymap, .dayinfo > section, .item, .flt, .fnote, .hotel-name, .wx-now, .wx-cell, .wx-note, .rec, " +
         ".group > h3, .group > .gnote, .group .row-head, .group > ul > li, .tips dt, .tips dd, .progress, .food-row .fcard";
 
       var sections = Array.prototype.slice.call(document.querySelectorAll("main .block"));
