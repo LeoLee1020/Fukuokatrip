@@ -102,7 +102,7 @@
           <label style="flex-direction:row;align-items:center;gap:8px;color:inherit;">匯率 1 日圓 =
             <input id="rate" type="number" inputmode="decimal" step="0.0001" min="0" value="0.21" aria-label="1 日圓等於幾元台幣">
             台幣</label>
-          <span>匯率請依出發前的實際牌價自己改。</span>
+          <button class="textbtn" id="rate-up" type="button">更新匯率</button><span id="rate-src">匯率可自己改,或按「更新匯率」抓最新的。</span>
         </div>
         <div class="bar" id="bar" role="img" aria-label="各類別占比"></div>
         <ul class="legend" id="legend"></ul>
@@ -257,6 +257,24 @@
     if (!store) store = localStore();
     if (store.mode === "local") { $("rate").value = rate; render(); }
     else { $("rate").value = rate; render(); }
+
+    async function fetchRate(manual) {
+      try {
+        var r = await fetch("https://open.er-api.com/v6/latest/JPY");
+        var j = await r.json(), v = j && j.rates && j.rates.TWD;
+        if (!(v > 0)) throw new Error("no rate");
+        v = Math.round(v * 10000) / 10000;
+        $("rate").value = v; store.setRate(v);
+        $("rate-src").textContent = "已更新為市場中間價,銀行換匯牌價通常會略高。";
+        lsSet("fukuoka-rate-at", String(Date.now()));
+        if (manual) toast("匯率已更新:1 日圓 = " + v + " 台幣", false);
+      } catch (e) {
+        $("rate-src").textContent = "抓不到最新匯率,請自己輸入。";
+        if (manual) toast("更新失敗,請稍後再試或自己輸入", false);
+      }
+    }
+    $("rate-up").addEventListener("click", function () { fetchRate(true); });
+    if (Date.now() - (+lsGet("fukuoka-rate-at") || 0) > 6 * 3600 * 1000) setTimeout(function () { fetchRate(false); }, 1500);
 
     $("rate").addEventListener("input", function () { var v = parseFloat(this.value); if (v > 0) store.setRate(v); });
     $("f").addEventListener("submit", function (e) {
