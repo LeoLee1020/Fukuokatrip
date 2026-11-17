@@ -1,12 +1,9 @@
-// 多人同步設定。把 Firebase 控制台給你的 firebaseConfig 貼在下面,取代 null。
-// 沒填(維持 null)時,記帳頁只會存在各自的手機裡。
-// 設定步驟見 README.md 的「記帳多人同步」。
-window.FIREBASE_CONFIG = null;
-/* 範例格式:
+// 多人同步設定(Firebase 網頁設定是公開識別資料,安全靠 Firestore 規則)。
 window.FIREBASE_CONFIG = {
-  apiKey: "...",
-  authDomain: "xxx.firebaseapp.com",
-  projectId: "xxx",
-  appId: "..."
+  apiKey: "AIzaSyC3gTUUDoB8YEL2LSoNf7O0rIQbSIhQOFk",
+  authDomain: "fukuoka-fabe2.firebaseapp.com",
+  projectId: "fukuoka-fabe2",
+  storageBucket: "fukuoka-fabe2.firebasestorage.app",
+  messagingSenderId: "663398119483",
+  appId: "1:663398119483:web:2433691320fade13b9041e"
 };
-*/
